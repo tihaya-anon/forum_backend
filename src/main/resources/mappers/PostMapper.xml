@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anon.backend.mapper.PostMapper">
+
+    <select id="readPostTags" resultType="java.lang.String">
+        SELECT tag.content
+        FROM tag
+                 JOIN ref_post_tag ON tag.id = ref_post_tag.tag_id
+        WHERE ref_post_tag.post_id = #{id};
+    </select>
+
+    <select id="readPostByTag" resultType="com.anon.backend.entity.Post">
+        SELECT post.*
+        FROM post
+                 JOIN ref_post_tag ON post.id = ref_post_tag.post_id
+                 JOIN tag ON ref_post_tag.tag_id = tag.id
+        WHERE tag.content = #{tag}
+          AND post.is_delete = 0
+        ORDER BY post.create_at DESC
+    </select>
+</mapper>

@@ -1,0 +1,57 @@
+<configuration>
+    <!-- 通用日志文件（记录所有日志） -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/app/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Controller 相关日志文件 -->
+    <appender name="CONTROLLER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/controller/controller.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/controller/controller-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Mapper 相关日志文件 -->
+    <appender name="MAPPER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mapper/mapper.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/mapper/mapper-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{2}:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 设置 Controller Aspect 日志的 logger，保留继承关系 -->
+    <logger name="com.anon.backend.aspect.ControllerLoggingAspect" level="INFO" additivity="true">
+        <appender-ref ref="CONTROLLER_FILE" />
+    </logger>
+
+    <!-- 设置 Mapper 日志的 logger，保留继承关系 -->
+    <logger name="com.anon.backend.mapper" level="INFO" additivity="true">
+        <appender-ref ref="MAPPER_FILE" />
+    </logger>
+
+    <!-- 设置 P6Spy 日志的 logger，保留继承关系 -->
+    <logger name="p6spy" level="INFO" additivity="true">
+        <appender-ref ref="MAPPER_FILE" />
+    </logger>
+
+    <!-- 根日志记录器，记录所有日志到 app.log -->
+    <root level="INFO">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
