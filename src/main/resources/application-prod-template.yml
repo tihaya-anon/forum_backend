@@ -1,0 +1,23 @@
+db:
+  driver: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/forum?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  username: root
+  password: password
+
+spring:
+  datasource:
+    driver-class-name: ${db.driver}
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+server:
+  port: 8080
+  address: localhost
+  ssl:
+    enabled: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
