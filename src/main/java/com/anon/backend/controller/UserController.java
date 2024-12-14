@@ -9,8 +9,8 @@ import com.anon.backend.map.UserMap;
 import com.anon.backend.payload.dto.user.UserRegisterDto;
 import com.anon.backend.payload.dto.user.UserUpdateDto;
 import com.anon.backend.payload.vo.user.*;
+import com.anon.backend.service.IStudentAuthService;
 import com.anon.backend.service.IUserService;
-import com.anon.backend.service.StudentAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -30,9 +30,9 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
   private final IUserService userService;
-  private final StudentAuthService studentAuthService;
+  private final IStudentAuthService studentAuthService;
 
-  public UserController(IUserService userService, StudentAuthService studentAuthService) {
+  public UserController(IUserService userService, IStudentAuthService studentAuthService) {
     this.userService = userService;
     this.studentAuthService = studentAuthService;
   }
