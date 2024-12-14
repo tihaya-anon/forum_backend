@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/comment")
 public class CommentController {
   @Operation(summary = "publish new comment")
-  @PostMapping("/{id}")
-  public RestResp<Void> publish(@PathVariable int id, CommentPublishDto dto) {
+  @PostMapping("/{authorId}")
+  public RestResp<Void> publish(@PathVariable int authorId, CommentPublishDto dto) {
     return RestResp.success();
   }
 }

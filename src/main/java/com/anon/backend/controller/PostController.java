@@ -5,6 +5,7 @@ import com.anon.backend.common.req.PageReq;
 import com.anon.backend.common.resp.RestResp;
 import com.anon.backend.dto.post.PostPersistDto;
 import com.anon.backend.dto.post.PostPublishDto;
+import com.anon.backend.dto.post.PostUpdateDto;
 import com.anon.backend.service.IPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -29,9 +30,9 @@ public class PostController {
   }
 
   @Operation(summary = "publish new post")
-  @PostMapping("/{id}")
-  public RestResp<Void> publish(@PathVariable int id, @Valid @RequestBody PostPublishDto dto) {
-    postService.create(id, dto);
+  @PostMapping("/{authorId}")
+  public RestResp<Void> publish(@PathVariable int authorId, @Valid @RequestBody PostPublishDto dto) {
+    postService.create(authorId, dto);
     return RestResp.success();
   }
 
@@ -39,6 +40,13 @@ public class PostController {
   @DeleteMapping("/{id}")
   public RestResp<Void> delete(@PathVariable int id) {
     postService.delete(id);
+    return RestResp.success();
+  }
+
+  @Operation(summary = "update post")
+  @PatchMapping("")
+  public RestResp<Void> update(@Valid @RequestBody PostUpdateDto dto) {
+    postService.update(dto);
     return RestResp.success();
   }
 

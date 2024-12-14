@@ -1,5 +1,6 @@
 package com.anon.backend.map;
 
+import com.anon.backend.dto.post.PostUpdateDto;
 import com.anon.backend.entity.Post;
 import com.anon.backend.dto.post.PostPersistDto;
 import com.anon.backend.dto.post.PostPublishDto;
@@ -13,7 +14,9 @@ import org.mapstruct.factory.Mappers;
 public interface PostMap {
   PostMap INSTANCE = Mappers.getMapper(PostMap.class);
 
-  Post publishVo2Post(PostPublishDto vo);
+  Post publishDto2Post(PostPublishDto dto);
 
   PostPersistDto post2PersistVo(Post post);
+
+  Post updateDto2Post(PostUpdateDto dto);
 }

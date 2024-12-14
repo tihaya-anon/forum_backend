@@ -1,5 +1,6 @@
 package com.anon.backend.service.impl;
 
+import com.anon.backend.dto.post.PostUpdateDto;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,9 +48,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void create(int author, @NotNull PostPublishDto vo) {
-    String[] tagContents = vo.getTags();
-    Post post = PostMap.INSTANCE.publishVo2Post(vo);
+  public void create(int author, @NotNull PostPublishDto dto) {
+    String[] tagContents = dto.getTags();
+    Post post = PostMap.INSTANCE.publishDto2Post(dto);
     post.setAuthor(author);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
     for (String tagContent : tagContents) {
@@ -80,6 +81,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     refPostTagList.forEach(refPostTag -> refPostTagIds.add(refPostTag.getId()));
     DBOperation.performWithCheck(
         logger, CURD.DELETE, () -> refPostTagService.removeByIds(refPostTagIds));
+  }
+
+  @Override
+  public void update(PostUpdateDto dto) {
+    Post post = PostMap.INSTANCE.updateDto2Post(dto);
+    DBOperation.performWithCheck(logger, CURD.UPDATE, ()->this.updateById(post));
   }
 
   @Override
