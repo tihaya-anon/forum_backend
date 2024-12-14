@@ -1,16 +1,20 @@
-package com.anon.backend.payload.dto.user;
+package com.anon.backend.dto.user;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
+@Setter
 @ToString
 public class UserRegisterDto {
+  @NotBlank
   private String username;
+  @NotBlank
   private String password;
-  private String authType;
-  private String phone;
+  @NotBlank
   private String pubKey;
+  @NotBlank
+  private String token;
 }

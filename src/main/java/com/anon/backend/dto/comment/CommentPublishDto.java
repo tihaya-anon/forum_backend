@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.comment;
+package com.anon.backend.dto.comment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CommentPublishVo {
+public class CommentPublishDto {
   @NotBlank private String content;
   @NotNull private String type;
   @NotNull private Integer author;

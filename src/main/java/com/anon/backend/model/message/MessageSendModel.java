@@ -1,16 +1,14 @@
-package com.anon.backend.payload.vo.message;
+package com.anon.backend.model.message;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @ToString
-public class MessageReceiveVo {
+public class MessageSendModel {
   private Integer sender;
+  private Integer receiver;
   private String content;
-  private LocalDateTime createAt;
 }

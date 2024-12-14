@@ -3,8 +3,8 @@ package com.anon.backend.controller;
 import com.anon.backend.common.constant.MessageEnum;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.common.resp.RestResp;
-import com.anon.backend.payload.vo.post.PostPersistVo;
-import com.anon.backend.payload.vo.post.PostPublishVo;
+import com.anon.backend.dto.post.PostPersistDto;
+import com.anon.backend.dto.post.PostPublishDto;
 import com.anon.backend.service.IPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,8 +30,8 @@ public class PostController {
 
   @Operation(summary = "publish new post")
   @PostMapping("/{id}")
-  public RestResp<Void> publish(@PathVariable int id, @Valid @RequestBody PostPublishVo vo) {
-    postService.create(id, vo);
+  public RestResp<Void> publish(@PathVariable int id, @Valid @RequestBody PostPublishDto dto) {
+    postService.create(id, dto);
     return RestResp.success();
   }
 
@@ -45,14 +45,14 @@ public class PostController {
   @Operation(summary = "filter by author")
   @GetMapping("/author/{id}")
   public RestResp<?> filter(@PathVariable int id, PageReq pageReq) {
-    List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
+    List<PostPersistDto> postPersistVoList = postService.filterByAuthor(id, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "filter by tag")
   @GetMapping("/tag/{tag}")
   public RestResp<?> filter(@PathVariable String tag, PageReq pageReq) {
-    List<PostPersistVo> postPersistVoList = postService.filterByTag(tag, pageReq);
+    List<PostPersistDto> postPersistVoList = postService.filterByTag(tag, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 }

@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.post;
+package com.anon.backend.dto.post;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class PostPersistVo {
+public class PostPersistDto {
   private Integer id;
   private String title;
   private List<String> tagList;

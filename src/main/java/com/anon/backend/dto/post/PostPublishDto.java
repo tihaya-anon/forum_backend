@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.post;
+package com.anon.backend.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostPublishVo {
+public class PostPublishDto {
   private String[] tags;
   @NotBlank private String title;
 }

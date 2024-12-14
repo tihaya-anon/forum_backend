@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.user;
+package com.anon.backend.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class UserLoginVo {
+public class UserLoginDto {
   @NotBlank
   private String phone;
   @NotBlank

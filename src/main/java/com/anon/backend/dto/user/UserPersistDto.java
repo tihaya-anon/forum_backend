@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.user;
+package com.anon.backend.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class UserPersistVo {
+public class UserPersistDto {
   private Integer id;
   private String username;
   private String school;

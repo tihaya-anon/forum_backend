@@ -1,13 +1,13 @@
 package com.anon.backend.service;
 
 import com.anon.backend.common.constant.AuthType;
-import com.anon.backend.payload.dto.user.UserRegisterDto;
+import com.anon.backend.model.user.UserRegisterModel;
 import com.anon.backend.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.anon.backend.payload.dto.user.UserUpdateDto;
-import com.anon.backend.payload.vo.user.UserAuthPhoneVo;
-import com.anon.backend.payload.vo.user.UserLoginVo;
-import com.anon.backend.payload.vo.user.UserPersistVo;
+import com.anon.backend.model.user.UserUpdateModel;
+import com.anon.backend.dto.user.UserAuthPhoneDto;
+import com.anon.backend.dto.user.UserLoginDto;
+import com.anon.backend.dto.user.UserPersistDto;
 import java.util.List;
 
 /**
@@ -21,13 +21,13 @@ public interface IUserService extends IService<User> {
 
   User getUserByPhone(String phone);
 
-  void authPhone(UserAuthPhoneVo vo);
+  void authPhone(UserAuthPhoneDto vo);
 
-  UserPersistVo register(UserRegisterDto dto);
+  UserPersistDto register(UserRegisterModel dto);
 
-  UserPersistVo login(UserLoginVo vo);
+  UserPersistDto login(UserLoginDto vo);
 
-  UserPersistVo update(UserUpdateDto dto);
+  UserPersistDto update(UserUpdateModel dto);
 
   void delete(int id);
 

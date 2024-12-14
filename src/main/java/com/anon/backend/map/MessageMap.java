@@ -1,10 +1,10 @@
 package com.anon.backend.map;
 
 import com.anon.backend.entity.Message;
-import com.anon.backend.payload.dto.message.MessageSendDto;
-import com.anon.backend.payload.vo.message.MessageHistoryVo;
-import com.anon.backend.payload.vo.message.MessageReceiveVo;
-import com.anon.backend.payload.vo.message.MessageSendVo;
+import com.anon.backend.dto.message.MessageHistoryDto;
+import com.anon.backend.dto.message.MessageReceiveDto;
+import com.anon.backend.dto.message.MessageSendDto;
+import com.anon.backend.model.message.MessageSendModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
@@ -15,11 +15,11 @@ import org.mapstruct.factory.Mappers;
 public interface MessageMap {
   MessageMap INSTANCE = Mappers.getMapper(MessageMap.class);
 
-  MessageSendDto sendVo2sendDto(MessageSendVo vo);
+  MessageSendModel sendVo2sendDto(MessageSendDto vo);
 
-  Message sendDto2Message(MessageSendDto dto);
+  Message sendDto2Message(MessageSendModel dto);
 
-  MessageReceiveVo messageVo2receiveDto(Message message);
+  MessageReceiveDto messageVo2receiveDto(Message message);
 
-  MessageHistoryVo messageVo2historyDto(Message message);
+  MessageHistoryDto messageVo2historyDto(Message message);
 }

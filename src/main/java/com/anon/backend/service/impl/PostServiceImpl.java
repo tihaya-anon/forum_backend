@@ -10,8 +10,8 @@ import com.anon.backend.entity.RefPostTag;
 import com.anon.backend.entity.Tag;
 import com.anon.backend.map.PostMap;
 import com.anon.backend.mapper.PostMapper;
-import com.anon.backend.payload.vo.post.PostPersistVo;
-import com.anon.backend.payload.vo.post.PostPublishVo;
+import com.anon.backend.dto.post.PostPersistDto;
+import com.anon.backend.dto.post.PostPublishDto;
 import com.anon.backend.service.IPostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.IRefPostTagService;
@@ -47,7 +47,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void create(int author, @NotNull PostPublishVo vo) {
+  public void create(int author, @NotNull PostPublishDto vo) {
     String[] tagContents = vo.getTags();
     Post post = PostMap.INSTANCE.publishVo2Post(vo);
     post.setAuthor(author);
@@ -83,7 +83,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   @Override
-  public List<PostPersistVo> filterByAuthor(int author, PageReq pageReq) {
+  public List<PostPersistDto> filterByAuthor(int author, PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("author", author).orderByDesc("create_at");
     List<Post> postList = PageOperation.paginate(logger, pageReq, null, baseMapper);
@@ -94,7 +94,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   @Override
-  public List<PostPersistVo> filterByTag(String tagContent, @NotNull PageReq pageReq) {
+  public List<PostPersistDto> filterByTag(String tagContent, @NotNull PageReq pageReq) {
     Page<Post> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     List<Post> postList =
         DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostByTag(page, tagContent))
@@ -105,12 +105,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     return addTags(postList);
   }
 
-  private @NotNull List<PostPersistVo> addTags(@NotNull List<Post> postList) {
-    List<PostPersistVo> postPersistVoList = new ArrayList<>();
+  private @NotNull List<PostPersistDto> addTags(@NotNull List<Post> postList) {
+    List<PostPersistDto> postPersistVoList = new ArrayList<>();
     for (Post post : postList) {
       List<String> tagContentList =
           DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostTags(post.getId()));
-      PostPersistVo postPersistVo = PostMap.INSTANCE.post2PersistVo(post);
+      PostPersistDto postPersistVo = PostMap.INSTANCE.post2PersistVo(post);
       postPersistVo.setTagList(tagContentList);
       postPersistVoList.add(postPersistVo);
     }

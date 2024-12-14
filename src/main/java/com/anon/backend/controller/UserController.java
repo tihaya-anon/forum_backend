@@ -4,11 +4,11 @@ import com.anon.backend.common.constant.AuthType;
 import com.anon.backend.common.constant.AuthTypeConst;
 import com.anon.backend.common.constant.StatusCodeEnum;
 import com.anon.backend.common.resp.RestResp;
+import com.anon.backend.dto.user.*;
 import com.anon.backend.entity.User;
 import com.anon.backend.map.UserMap;
-import com.anon.backend.payload.dto.user.UserRegisterDto;
-import com.anon.backend.payload.dto.user.UserUpdateDto;
-import com.anon.backend.payload.vo.user.*;
+import com.anon.backend.model.user.UserRegisterModel;
+import com.anon.backend.model.user.UserUpdateModel;
 import com.anon.backend.service.IStudentAuthService;
 import com.anon.backend.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,30 +39,30 @@ public class UserController {
 
   @Operation(summary = "authenticate the phone by sending SMS")
   @PostMapping("/auth_phone")
-  public RestResp<?> authPhone(@Valid @RequestBody UserAuthPhoneVo vo) {
-    User user = userService.getUserByPhone(vo.getPhone());
+  public RestResp<?> authPhone(@Valid @RequestBody UserAuthPhoneDto dto) {
+    User user = userService.getUserByPhone(dto.getPhone());
     if (user != null) {
       return RestResp.fail(StatusCodeEnum.EXISTED_PHONE);
     }
-    userService.authPhone(vo);
+    userService.authPhone(dto);
     return RestResp.success().setMsg("a confirm message has been sent, please check your phone");
   }
 
   @Operation(summary = "register, authenticate by the authType")
   @PostMapping("/register")
   public RestResp<?> register(
-      @Valid @RequestBody UserRegisterVo vo,
+      @Valid @RequestBody UserRegisterDto dto,
       @Parameter(description = "authType Header", example = AuthTypeConst.MOCK_VALUE) @RequestParam
           String authType,
       @RequestParam String phone) {
-    boolean authenticated = studentAuthService.authenticate(authType, vo.getToken());
+    boolean authenticated = studentAuthService.authenticate(authType, dto.getToken());
     if (!authenticated) {
       return RestResp.fail(StatusCodeEnum.SCHOOL_AUTH_FAILED);
     }
-    UserRegisterDto dto = UserMap.INSTANCE.registerVo2registerDto(vo);
-    dto.setAuthType(authType);
-    dto.setPhone(phone);
-    UserPersistVo userPersistVo = userService.register(dto);
+    UserRegisterModel model = UserMap.INSTANCE.registerVo2registerDto(dto);
+    model.setAuthType(authType);
+    model.setPhone(phone);
+    UserPersistDto userPersistVo = userService.register(model);
     return RestResp.success(userPersistVo).setMsg("welcome " + userPersistVo.getUsername());
   }
 
@@ -72,29 +72,29 @@ public class UserController {
       @Parameter(description = "authType Header", example = AuthTypeConst.MOCK_VALUE)
           @RequestHeader("authType")
           String authType,
-      @Valid @RequestBody UserLoginVo vo) {
-    boolean authenticated = studentAuthService.authenticate(authType, vo.getToken());
+      @Valid @RequestBody UserLoginDto dto) {
+    boolean authenticated = studentAuthService.authenticate(authType, dto.getToken());
     if (!authenticated) {
       return RestResp.fail(StatusCodeEnum.SESSION_EXPIRED);
     }
-    UserPersistVo userPersistVo = userService.login(vo);
-    return RestResp.success(userPersistVo).setMsg("welcome " + userPersistVo.getUsername());
+    UserPersistDto userPersistDto = userService.login(dto);
+    return RestResp.success(userPersistDto).setMsg("welcome " + userPersistDto.getUsername());
   }
 
   @Operation(summary = "update user info")
   @PatchMapping("/{id}")
-  public RestResp<?> update(@PathVariable int id, @RequestBody UserUpdateVo vo) {
-    boolean isOldPasswordEmpty = StringUtils.isEmpty(vo.getOldPassword());
-    boolean isNewPasswordProvided = !StringUtils.isEmpty(vo.getPassword());
-    boolean isPhoneProvided = !StringUtils.isEmpty(vo.getPhone());
-    boolean isPubKeyProvided = !StringUtils.isEmpty(vo.getPubKey());
+  public RestResp<?> update(@PathVariable int id, @RequestBody UserUpdateDto dto) {
+    boolean isOldPasswordEmpty = StringUtils.isEmpty(dto.getOldPassword());
+    boolean isNewPasswordProvided = !StringUtils.isEmpty(dto.getPassword());
+    boolean isPhoneProvided = !StringUtils.isEmpty(dto.getPhone());
+    boolean isPubKeyProvided = !StringUtils.isEmpty(dto.getPubKey());
     boolean isKeyProvided = isNewPasswordProvided || isPhoneProvided || isPubKeyProvided;
     if (isKeyProvided && isOldPasswordEmpty) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR, "must provide old password");
     }
-    UserUpdateDto userUpdateDto = UserMap.INSTANCE.updateVo2updateDto(vo);
-    userUpdateDto.setId(id);
-    UserPersistVo userPersistVo = userService.update(userUpdateDto);
+    UserUpdateModel userUpdateModel = UserMap.INSTANCE.updateVo2updateDto(dto);
+    userUpdateModel.setId(id);
+    UserPersistDto userPersistVo = userService.update(userUpdateModel);
     return RestResp.success(userPersistVo);
   }
 

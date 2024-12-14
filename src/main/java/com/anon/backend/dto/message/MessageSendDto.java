@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.message;
+package com.anon.backend.dto.message;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class MessageSendVo {
+public class MessageSendDto {
   @NotBlank private String content;
 }

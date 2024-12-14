@@ -1,16 +1,16 @@
-package com.anon.backend.payload.vo.user;
+package com.anon.backend.model.user;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
+@Setter
 @Getter
-@AllArgsConstructor
 @ToString
-public class UserUpdateVo {
+public class UserRegisterModel {
   private String username;
   private String password;
+  private String authType;
   private String phone;
   private String pubKey;
-  private String oldPassword;
 }

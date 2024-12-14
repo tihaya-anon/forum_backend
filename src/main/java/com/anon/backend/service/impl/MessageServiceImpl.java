@@ -1,7 +1,6 @@
 package com.anon.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.anon.backend.common.CustomException;
 import com.anon.backend.common.constant.CURD;
@@ -11,9 +10,9 @@ import com.anon.backend.entity.User;
 import com.anon.backend.entity.Message;
 import com.anon.backend.map.MessageMap;
 import com.anon.backend.mapper.MessageMapper;
-import com.anon.backend.payload.dto.message.MessageSendDto;
-import com.anon.backend.payload.vo.message.MessageHistoryVo;
-import com.anon.backend.payload.vo.message.MessageReceiveVo;
+import com.anon.backend.model.message.MessageSendModel;
+import com.anon.backend.dto.message.MessageHistoryDto;
+import com.anon.backend.dto.message.MessageReceiveDto;
 import com.anon.backend.security.SymmetricKeyGen;
 import com.anon.backend.security.util.PublicKeyUtil;
 import com.anon.backend.security.util.SymmetricKeyUtil;
@@ -54,14 +53,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
   }
 
   @Override
-  public void create(@NotNull MessageSendDto dto) {
+  public void create(@NotNull MessageSendModel dto) {
     getRecipient(dto.getSender(), dto.getReceiver());
     Message message = MessageMap.INSTANCE.sendDto2Message(dto);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(message));
   }
 
   @Override
-  public List<MessageReceiveVo> read(int id, boolean all, PageReq pageReq) {
+  public List<MessageReceiveDto> read(int id, boolean all, PageReq pageReq) {
     QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("receiver", id);
     if (!all) {
@@ -72,7 +71,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     if (messageList.isEmpty()) {
       return null;
     }
-    List<MessageReceiveVo> messageReceiveVoList =
+    List<MessageReceiveDto> messageReceiveVoList =
         messageList.stream()
             .map(MessageMap.INSTANCE::messageVo2receiveDto)
             .collect(Collectors.toCollection(ArrayList::new));
@@ -81,17 +80,17 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
   }
 
   @Override
-  public List<MessageHistoryVo> history(int id, int with, PageReq pageReq) {
+  public List<MessageHistoryDto> history(int id, int with, PageReq pageReq) {
     Page<Message> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     List<Message> messageList = baseMapper.readRecipientMessage(page, id, with).getRecords();
     if (messageList == null || messageList.isEmpty()) {
       return null;
     }
-    List<MessageHistoryVo> messageHistoryVoList;
+    List<MessageHistoryDto> messageHistoryVoList;
     messageHistoryVoList =
         messageList.stream()
             .map(MessageMap.INSTANCE::messageVo2historyDto)
-            .sorted(Comparator.comparing(MessageHistoryVo::getCreateAt))
+            .sorted(Comparator.comparing(MessageHistoryDto::getCreateAt))
             .toList();
     return messageHistoryVoList;
   }

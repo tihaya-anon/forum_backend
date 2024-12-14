@@ -3,9 +3,9 @@ package com.anon.backend.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.entity.Message;
-import com.anon.backend.payload.dto.message.MessageSendDto;
-import com.anon.backend.payload.vo.message.MessageHistoryVo;
-import com.anon.backend.payload.vo.message.MessageReceiveVo;
+import com.anon.backend.model.message.MessageSendModel;
+import com.anon.backend.dto.message.MessageHistoryDto;
+import com.anon.backend.dto.message.MessageReceiveDto;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ import java.util.List;
  * @since 2024-10-22
  */
 public interface IMessageService extends IService<Message> {
-  void create(MessageSendDto dto);
+  void create(MessageSendModel dto);
 
-  List<MessageReceiveVo> read(int id, boolean all, PageReq pageReq);
+  List<MessageReceiveDto> read(int id, boolean all, PageReq pageReq);
 
-  List<MessageHistoryVo> history(int id, int with, PageReq pageReq);
+  List<MessageHistoryDto> history(int id, int with, PageReq pageReq);
 
   String readRecipientKey(int id, int to);
 }

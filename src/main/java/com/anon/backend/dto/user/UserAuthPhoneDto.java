@@ -1,4 +1,4 @@
-package com.anon.backend.payload.vo.user;
+package com.anon.backend.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserAuthPhoneVo {
+public class UserAuthPhoneDto {
   @NotBlank(message = "must provide school")
   private String authType;
 
