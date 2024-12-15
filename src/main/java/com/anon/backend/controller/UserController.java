@@ -2,6 +2,7 @@ package com.anon.backend.controller;
 
 import com.anon.backend.common.constant.AuthType;
 import com.anon.backend.common.constant.AuthTypeConst;
+import com.anon.backend.common.constant.MessageEnum;
 import com.anon.backend.common.constant.StatusCodeEnum;
 import com.anon.backend.common.resp.RestResp;
 import com.anon.backend.dto.user.*;
@@ -45,7 +46,7 @@ public class UserController {
       return RestResp.fail(StatusCodeEnum.EXISTED_PHONE);
     }
     userService.authPhone(dto);
-    return RestResp.success().setMsg("a confirm message has been sent, please check your phone");
+    return RestResp.success().setMsg(MessageEnum.AUTH_CONFIRM);
   }
 
   @Operation(summary = "register, authenticate by the authType")
@@ -63,7 +64,7 @@ public class UserController {
     model.setAuthType(authType);
     model.setPhone(phone);
     UserPersistDto userPersistVo = userService.register(model);
-    return RestResp.success(userPersistVo).setMsg("welcome " + userPersistVo.getUsername());
+    return RestResp.success(userPersistVo).setMsg(MessageEnum.WELCOME + userPersistVo.getUsername());
   }
 
   @Operation(summary = "login, can add session expire")
@@ -78,7 +79,7 @@ public class UserController {
       return RestResp.fail(StatusCodeEnum.SESSION_EXPIRED);
     }
     UserPersistDto userPersistDto = userService.login(dto);
-    return RestResp.success(userPersistDto).setMsg("welcome " + userPersistDto.getUsername());
+    return RestResp.success(userPersistDto).setMsg(MessageEnum.WELCOME + userPersistDto.getUsername());
   }
 
   @Operation(summary = "update user info")
@@ -90,7 +91,7 @@ public class UserController {
     boolean isPubKeyProvided = !StringUtils.isEmpty(dto.getPubKey());
     boolean isKeyProvided = isNewPasswordProvided || isPhoneProvided || isPubKeyProvided;
     if (isKeyProvided && isOldPasswordEmpty) {
-      return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR, "must provide old password");
+      return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR, MessageEnum.NO_OLD_PASSWORD);
     }
     UserUpdateModel userUpdateModel = UserMap.INSTANCE.updateVo2updateDto(dto);
     userUpdateModel.setId(id);
