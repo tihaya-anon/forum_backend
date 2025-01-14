@@ -3,9 +3,8 @@ package com.anon.backend.controller;
 import com.anon.backend.common.constant.MessageEnum;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.common.resp.RestResp;
-import com.anon.backend.dto.post.PostPersistDto;
-import com.anon.backend.dto.post.PostPublishDto;
-import com.anon.backend.dto.post.PostUpdateDto;
+import com.anon.backend.payload.vo.post.PostPersistVo;
+import com.anon.backend.payload.vo.post.PostPublishVo;
 import com.anon.backend.service.IPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,9 +29,9 @@ public class PostController {
   }
 
   @Operation(summary = "publish new post")
-  @PostMapping("/{authorId}")
-  public RestResp<Void> publish(@PathVariable int authorId, @Valid @RequestBody PostPublishDto dto) {
-    postService.create(authorId, dto);
+  @PostMapping("/{id}")
+  public RestResp<Void> publish(@PathVariable int id, @Valid @RequestBody PostPublishVo vo) {
+    postService.create(id, vo);
     return RestResp.success();
   }
 
@@ -43,24 +42,17 @@ public class PostController {
     return RestResp.success();
   }
 
-  @Operation(summary = "update post")
-  @PatchMapping("")
-  public RestResp<Void> update(@Valid @RequestBody PostUpdateDto dto) {
-    postService.update(dto);
-    return RestResp.success();
-  }
-
   @Operation(summary = "filter by author")
   @GetMapping("/author/{id}")
-  public RestResp<?> filter(@PathVariable int id, PageReq pageReq) {
-    List<PostPersistDto> postPersistVoList = postService.filterByAuthor(id, pageReq);
+  public RestResp<?> filterAuthor(@PathVariable int id, PageReq pageReq) {
+    List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "filter by tag")
   @GetMapping("/tag/{tag}")
-  public RestResp<?> filter(@PathVariable String tag, PageReq pageReq) {
-    List<PostPersistDto> postPersistVoList = postService.filterByTag(tag, pageReq);
+  public RestResp<?> filterTag(@PathVariable String tag, PageReq pageReq) {
+    List<PostPersistVo> postPersistVoList = postService.filterByTag(tag, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 }

@@ -6,14 +6,14 @@ import com.anon.backend.common.constant.AuthType;
 import com.anon.backend.common.constant.AuthTypeConst;
 import com.anon.backend.common.constant.CURD;
 import com.anon.backend.common.constant.StatusCodeEnum;
-import com.anon.backend.model.user.UserRegisterModel;
+import com.anon.backend.payload.dto.user.UserRegisterDto;
 import com.anon.backend.entity.User;
 import com.anon.backend.map.UserMap;
 import com.anon.backend.mapper.UserMapper;
-import com.anon.backend.model.user.UserUpdateModel;
-import com.anon.backend.dto.user.UserAuthPhoneDto;
-import com.anon.backend.dto.user.UserLoginDto;
-import com.anon.backend.dto.user.UserPersistDto;
+import com.anon.backend.payload.dto.user.UserUpdateDto;
+import com.anon.backend.payload.vo.user.UserAuthPhoneVo;
+import com.anon.backend.payload.vo.user.UserLoginVo;
+import com.anon.backend.payload.vo.user.UserPersistVo;
 import com.anon.backend.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.util.DBOperation;
@@ -24,6 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,15 +38,6 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  @Value("${server.ssl.enabled}")
-  private boolean serverSSLEnabled;
-
-  @Value("${server.address}")
-  private String serverAddress;
-
-  @Value("${server.port}")
-  private String serverPort;
 
   @Override
   public User getUserByPhone(String phone) {
@@ -60,20 +53,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
   }
 
   @Override
-  public void authPhone(UserAuthPhoneDto vo) {
-    String serverProtocol = serverSSLEnabled ? "https" : "http";
-    //    String path = serverProtocol + "://" + serverAddress + ":" + serverPort + "/register";
-    String path = serverProtocol + "://" + serverAddress + ":" + 3000 + "/register";
-    String url =
-        UriComponentsBuilder.fromHttpUrl(path)
-            .queryParam("authType", vo.getAuthType())
-            .queryParam("phone", vo.getPhone())
-            .toUriString();
-    sendMessage(vo.getPhone(), url);
+  public void authPhone(UserAuthPhoneVo vo) {
+    sendMessage(vo.getPhone(), "verify code mock");
   }
 
   @Override
-  public UserPersistDto register(UserRegisterModel dto) {
+  public UserPersistVo register(UserRegisterDto dto) {
     User user = getUserByPhone(dto.getPhone());
     if (user != null) {
       throw new CustomException(StatusCodeEnum.EXISTED_PHONE);
@@ -93,14 +78,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     User finalUser = user;
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(finalUser));
-    UserPersistDto userPersistVo = UserMap.INSTANCE.user2persistVo(user);
+    UserPersistVo userPersistVo = UserMap.INSTANCE.user2persistVo(user);
     userPersistVo.setToken("<token>");
 
     return userPersistVo;
   }
 
   @Override
-  public UserPersistDto login(UserLoginDto vo) {
+  public UserPersistVo login(UserLoginVo vo) {
     User user = getUserByPhone(vo.getPhone());
     if (user == null) {
       throw new CustomException(StatusCodeEnum.USER_NOT_FOUND);
@@ -113,14 +98,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       throw new CustomException(StatusCodeEnum.PASSWORD_WRONG);
     }
 
-    UserPersistDto userPersistVo = UserMap.INSTANCE.user2persistVo(user);
+    UserPersistVo userPersistVo = UserMap.INSTANCE.user2persistVo(user);
     userPersistVo.setToken("<token>");
 
     return userPersistVo;
   }
 
   @Override
-  public UserPersistDto update(UserUpdateModel dto) {
+  public UserPersistVo update(UserUpdateDto dto) {
     User user = this.getById(dto.getId());
     if (user == null) {
       throw new CustomException(StatusCodeEnum.USER_NOT_FOUND);

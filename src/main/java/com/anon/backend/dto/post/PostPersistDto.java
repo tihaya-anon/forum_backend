@@ -15,6 +15,7 @@ public class PostPersistDto {
   private String title;
   private List<String> tagList;
   private Integer author;
+  private String username;
   private Integer commentCount;
   private Integer likes;
   private Integer dislikes;

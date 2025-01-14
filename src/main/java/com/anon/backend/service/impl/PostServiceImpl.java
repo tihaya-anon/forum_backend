@@ -1,6 +1,5 @@
 package com.anon.backend.service.impl;
 
-import com.anon.backend.dto.post.PostUpdateDto;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,8 +10,8 @@ import com.anon.backend.entity.RefPostTag;
 import com.anon.backend.entity.Tag;
 import com.anon.backend.map.PostMap;
 import com.anon.backend.mapper.PostMapper;
-import com.anon.backend.dto.post.PostPersistDto;
-import com.anon.backend.dto.post.PostPublishDto;
+import com.anon.backend.payload.vo.post.PostPersistVo;
+import com.anon.backend.payload.vo.post.PostPublishVo;
 import com.anon.backend.service.IPostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.IRefPostTagService;
@@ -48,9 +47,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void create(int author, @NotNull PostPublishDto dto) {
-    String[] tagContents = dto.getTags();
-    Post post = PostMap.INSTANCE.publishDto2Post(dto);
+  public void create(int author, @NotNull PostPublishVo vo) {
+    String[] tagContents = vo.getTags();
+    Post post = PostMap.INSTANCE.publishVo2Post(vo);
     post.setAuthor(author);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
     for (String tagContent : tagContents) {
@@ -84,16 +83,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   @Override
-  public void update(PostUpdateDto dto) {
-    Post post = PostMap.INSTANCE.updateDto2Post(dto);
-    DBOperation.performWithCheck(logger, CURD.UPDATE, ()->this.updateById(post));
-  }
-
-  @Override
-  public List<PostPersistDto> filterByAuthor(int author, PageReq pageReq) {
+  public List<PostPersistVo> filterByAuthor(int author, @NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("author", author).orderByDesc("create_at");
-    List<Post> postList = PageOperation.paginate(logger, pageReq, null, baseMapper);
+    List<Post> postList = PageOperation.paginate(logger, pageReq, queryWrapper, baseMapper);
     if (postList.isEmpty()) {
       return null;
     }
@@ -101,7 +94,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   @Override
-  public List<PostPersistDto> filterByTag(String tagContent, @NotNull PageReq pageReq) {
+  public List<PostPersistVo> filterByTag(String tagContent, @NotNull PageReq pageReq) {
     Page<Post> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     List<Post> postList =
         DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostByTag(page, tagContent))
@@ -112,12 +105,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     return addTags(postList);
   }
 
-  private @NotNull List<PostPersistDto> addTags(@NotNull List<Post> postList) {
-    List<PostPersistDto> postPersistVoList = new ArrayList<>();
+  private @NotNull <T> List<PostPersistVo> addTags(@NotNull List<Post> postList) {
+    List<PostPersistVo> postPersistVoList = new ArrayList<>();
     for (Post post : postList) {
       List<String> tagContentList =
           DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostTags(post.getId()));
-      PostPersistDto postPersistVo = PostMap.INSTANCE.post2PersistVo(post);
+      PostPersistVo postPersistVo = PostMap.INSTANCE.post2PersistVo(post);
       postPersistVo.setTagList(tagContentList);
       postPersistVoList.add(postPersistVo);
     }
