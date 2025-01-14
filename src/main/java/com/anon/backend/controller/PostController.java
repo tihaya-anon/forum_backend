@@ -30,21 +30,21 @@ public class PostController {
 
   @Operation(summary = "publish new post")
   @PostMapping("/{id}")
-  public RestResp<Void> publish(@PathVariable int id, @Valid @RequestBody PostPublishVo vo) {
+  public RestResp<Void> publish(@PathVariable long id, @Valid @RequestBody PostPublishVo vo) {
     postService.create(id, vo);
     return RestResp.success();
   }
 
   @Operation(summary = "delete post")
   @DeleteMapping("/{id}")
-  public RestResp<Void> delete(@PathVariable int id) {
+  public RestResp<Void> delete(@PathVariable long id) {
     postService.delete(id);
     return RestResp.success();
   }
 
   @Operation(summary = "filter by author")
   @GetMapping("/author/{id}")
-  public RestResp<?> filterAuthor(@PathVariable int id, PageReq pageReq) {
+  public RestResp<?> filterAuthor(@PathVariable long id, PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }

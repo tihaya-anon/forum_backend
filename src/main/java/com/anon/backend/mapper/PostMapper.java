@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2024-10-24
  */
 public interface PostMapper extends BaseMapper<Post> {
-  List<String> readPostTags(Integer id);
+  List<String> readPostTags(Long id);
 
   IPage<Post> readPostByTag(Page<Post> page, String tag);
 }

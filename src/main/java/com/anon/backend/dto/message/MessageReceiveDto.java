@@ -1,4 +1,4 @@
-package com.anon.backend.dto.message;
+package com.anon.backend.payload.vo.message;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class MessageReceiveDto {
-  private Integer sender;
+public class MessageReceiveVo {
+  private Long sender;
   private String content;
   private LocalDateTime createAt;
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 * tag can be filters and traced, so it is required to be an independent table
 *
 * @author anon
-* @since 2024-10-30
+* @since 2025-01-14
 */
 @Getter
 @Setter
@@ -22,7 +22,7 @@ public class Tag implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @TableId(value = "id", type = IdType.AUTO)
-  private Integer id;
+  private Long id;
 
   private String content;
 }

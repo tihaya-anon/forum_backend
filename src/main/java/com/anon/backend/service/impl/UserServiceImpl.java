@@ -128,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
   }
 
   @Override
-  public void delete(int id) {
+  public void delete(long id) {
     DBOperation.performWithCheck(logger, CURD.DELETE, () -> this.removeById(id));
   }
 

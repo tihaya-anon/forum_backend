@@ -20,16 +20,16 @@ import java.util.Map;
 public interface MessageMapper extends BaseMapper<Message> {
   @Select(
       "SELECT user_a, user_b, key_a, key_b FROM util_session_key WHERE user_a = #{userA} AND user_b = #{userB}")
-  Map<String, Object> readRecipientKey(@Param("userA") int userA, @Param("userB") int userB);
+  Map<String, Object> readRecipientKey(@Param("userA") long userA, @Param("userB") long userB);
 
   @Insert(
       "INSERT INTO util_session_key (user_a, user_b, key_a, key_b) VALUES (#{userA}, #{userB}, #{keyA}, #{keyB})")
   int createRecipientKey(
-      @Param("userA") int userA,
-      @Param("userB") int userB,
+      @Param("userA") long userA,
+      @Param("userB") long userB,
       @Param("keyA") String keyA,
       @Param("keyB") String keyB);
 
   IPage<Message> readRecipientMessage(
-      Page<Message> page, @Param("userA") int userA, @Param("userB") int userB);
+      Page<Message> page, @Param("userA") long userA, @Param("userB") long userB);
 }

@@ -14,7 +14,7 @@ import lombok.Setter;
 * integrated comment on post and comment on comment, support nested comments
 *
 * @author anon
-* @since 2024-10-30
+* @since 2025-01-14
 */
 @Getter
 @Setter
@@ -24,20 +24,20 @@ public class Comment implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @TableId(value = "id", type = IdType.AUTO)
-  private Integer id;
+  private Long id;
 
   @Schema(description = "can be plain text, url")
   private String content;
 
   private String type;
 
-  private Integer author;
+  private Long author;
 
   @Schema(description = "0: post parent; 1: comment parent")
   private Boolean parentType;
 
   @Schema(description = "the id of which the comment replay to, can be post or comment")
-  private Integer parent;
+  private Long parent;
 
   private Integer childCount;
 

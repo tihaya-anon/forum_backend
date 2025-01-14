@@ -14,7 +14,7 @@ import lombok.Setter;
 * 
 *
 * @author anon
-* @since 2024-10-30
+* @since 2025-01-14
 */
 @Getter
 @Setter
@@ -25,11 +25,11 @@ public class RefFollow implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @TableId(value = "id", type = IdType.AUTO)
-  private Integer id;
+  private Long id;
 
-  private Integer following;
+  private Long following;
 
-  private Integer follower;
+  private Long follower;
 
   @TableLogic
   private Boolean isDelete;

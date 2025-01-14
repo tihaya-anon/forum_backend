@@ -12,7 +12,7 @@ import lombok.ToString;
 public class CommentPublishDto {
   @NotBlank private String content;
   @NotNull private String type;
-  @NotNull private Integer author;
+  @NotNull private Long author;
   @NotNull private Boolean parentType;
-  @NotNull private Integer parent;
+  @NotNull private Long parent;
 }

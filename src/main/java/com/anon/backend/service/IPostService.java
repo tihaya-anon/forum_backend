@@ -1,11 +1,10 @@
 package com.anon.backend.service;
 
 import com.anon.backend.common.req.PageReq;
-import com.anon.backend.dto.post.PostUpdateDto;
 import com.anon.backend.entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.anon.backend.dto.post.PostPersistDto;
-import com.anon.backend.dto.post.PostPublishDto;
+import com.anon.backend.payload.vo.post.PostPersistVo;
+import com.anon.backend.payload.vo.post.PostPublishVo;
 
 import java.util.List;
 
@@ -18,13 +17,11 @@ import java.util.List;
  */
 public interface IPostService extends IService<Post> {
 
-  void create(int author, PostPublishDto dto);
+  void create(long author, PostPublishVo vo);
 
-  void delete(int id);
+  void delete(long id);
 
-  void update(PostUpdateDto dto);
+  List<PostPersistVo> filterByAuthor(long author, PageReq pageReq);
 
-  List<PostPersistDto> filterByAuthor(int author, PageReq pageReq);
-
-  List<PostPersistDto> filterByTag(String tag, PageReq pageReq);
+  List<PostPersistVo> filterByTag(String tag, PageReq pageReq);
 }

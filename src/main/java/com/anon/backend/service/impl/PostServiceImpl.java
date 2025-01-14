@@ -47,7 +47,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void create(int author, @NotNull PostPublishVo vo) {
+  public void create(long author, @NotNull PostPublishVo vo) {
     String[] tagContents = vo.getTags();
     Post post = PostMap.INSTANCE.publishVo2Post(vo);
     post.setAuthor(author);
@@ -69,21 +69,21 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void delete(int id) {
+  public void delete(long id) {
     DBOperation.performWithCheck(logger, CURD.DELETE, () -> this.removeById(id));
 
     QueryWrapper<RefPostTag> queryWrapper = new QueryWrapper<RefPostTag>().eq("post_id", id);
     BaseMapper<RefPostTag> refPostTagBaseMapper = refPostTagService.getBaseMapper();
     List<RefPostTag> refPostTagList =
         DBOperation.perform(logger, CURD.READ, () -> refPostTagBaseMapper.selectList(queryWrapper));
-    ArrayList<Integer> refPostTagIds = new ArrayList<>();
+    ArrayList<Long> refPostTagIds = new ArrayList<>();
     refPostTagList.forEach(refPostTag -> refPostTagIds.add(refPostTag.getId()));
     DBOperation.performWithCheck(
         logger, CURD.DELETE, () -> refPostTagService.removeByIds(refPostTagIds));
   }
 
   @Override
-  public List<PostPersistVo> filterByAuthor(int author, @NotNull PageReq pageReq) {
+  public List<PostPersistVo> filterByAuthor(long author, @NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("author", author).orderByDesc("create_at");
     List<Post> postList = PageOperation.paginate(logger, pageReq, queryWrapper, baseMapper);

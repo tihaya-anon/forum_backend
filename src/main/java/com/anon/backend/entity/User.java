@@ -14,7 +14,7 @@ import lombok.Setter;
 * when registering, user must provide its session id. Once session validation passed, use session id to generate a pair of keys
 *
 * @author anon
-* @since 2024-10-30
+* @since 2025-01-14
 */
 @Getter
 @Setter
@@ -24,7 +24,7 @@ public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @TableId(value = "id", type = IdType.AUTO)
-  private Integer id;
+  private Long id;
 
   private String username;
 

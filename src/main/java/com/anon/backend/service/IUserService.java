@@ -29,7 +29,7 @@ public interface IUserService extends IService<User> {
 
   UserPersistDto update(UserUpdateModel dto);
 
-  void delete(int id);
+  void delete(long id);
 
   void sendMessage(String phone, String content);
 

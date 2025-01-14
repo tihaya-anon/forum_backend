@@ -5,10 +5,10 @@ import com.anon.backend.common.constant.StatusCodeEnum;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.common.resp.RestResp;
 import com.anon.backend.map.MessageMap;
-import com.anon.backend.dto.message.MessageHistoryDto;
-import com.anon.backend.dto.message.MessageReceiveDto;
-import com.anon.backend.dto.message.MessageSendDto;
-import com.anon.backend.model.message.MessageSendModel;
+import com.anon.backend.payload.dto.message.MessageSendDto;
+import com.anon.backend.payload.vo.message.MessageHistoryVo;
+import com.anon.backend.payload.vo.message.MessageReceiveVo;
+import com.anon.backend.payload.vo.message.MessageSendVo;
 import com.anon.backend.service.IMessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -34,37 +34,37 @@ public class MessageController {
   @Operation(summary = "send message to")
   @PostMapping("/send/{to}")
   public RestResp<Void> send(
-      @PathVariable int id, @PathVariable int to, @Valid @RequestBody MessageSendDto dto) {
+      @PathVariable long id, @PathVariable long to, @Valid @RequestBody MessageSendVo vo) {
     if (id == to) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR).setMsg(MessageEnum.CONTACT_SELF_FORBID);
     }
-    MessageSendModel model = MessageMap.INSTANCE.sendVo2sendDto(dto);
-    model.setSender(id);
-    model.setReceiver(to);
-    messageService.create(model);
+    MessageSendDto dto = MessageMap.INSTANCE.sendVo2sendDto(vo);
+    dto.setSender(id);
+    dto.setReceiver(to);
+    messageService.create(dto);
     return RestResp.success();
   }
 
   @Operation(summary = "receive message regardless sender")
   @GetMapping("/receive")
-  public RestResp<?> receive(@PathVariable int id, @RequestParam int all, PageReq pageReq) {
-    List<MessageReceiveDto> receiveVoList = messageService.read(id, all != 0, pageReq);
+  public RestResp<?> receive(@PathVariable long id, @RequestParam int all, PageReq pageReq) {
+    List<MessageReceiveVo> receiveVoList = messageService.read(id, all != 0, pageReq);
     return RestResp.allowNull(receiveVoList, MessageEnum.NO_MESSAGE_RECEIVED);
   }
 
   @Operation(summary = "fetch history")
   @GetMapping("/history/{with}")
-  public RestResp<?> history(@PathVariable int id, @PathVariable int with, PageReq pageReq) {
+  public RestResp<?> history(@PathVariable long id, @PathVariable long with, PageReq pageReq) {
     if (id == with) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR).setMsg(MessageEnum.CONTACT_SELF_FORBID);
     }
-    List<MessageHistoryDto> historyVoList = messageService.history(id, with, pageReq);
+    List<MessageHistoryVo> historyVoList = messageService.history(id, with, pageReq);
     return RestResp.allowNull(historyVoList, MessageEnum.NO_MESSAGE_HISTORY);
   }
 
   @Operation(summary = "get symmetric key for the conversation")
   @GetMapping("/symmetric_key/{to}")
-  public RestResp<?> fetchPubKey(@PathVariable int id, @PathVariable int to) {
+  public RestResp<?> fetchPubKey(@PathVariable long id, @PathVariable long to) {
     if (id == to) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR).setMsg(MessageEnum.CONTACT_SELF_FORBID);
     }
