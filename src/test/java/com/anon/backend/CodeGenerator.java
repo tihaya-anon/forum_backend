@@ -43,11 +43,11 @@ public class CodeGenerator {
                 builder
                     .parent(packageName)
                     .entity("entity")
-//                    .controller("controller")
-//                    .mapper("mapper")
-//                    .service("service")
-//                    .serviceImpl("service.impl")
-//                    .xml("mapper")
+                    //                    .controller("controller")
+                    //                    .mapper("mapper")
+                    //                    .service("service")
+                    //                    .serviceImpl("service.impl")
+                    //                    .xml("mapper")
                     .pathInfo(
                         Collections.singletonMap(
                             OutputFile.xml,
@@ -61,10 +61,10 @@ public class CodeGenerator {
                     .logicDeleteColumnName("is_delete")
                     .enableLombok()
                     .enableFileOverride()
-//                    .controllerBuilder()
-//                    .enableRestStyle()
-//                    .template("/templates/controller.java")
-        )
+            //                    .controllerBuilder()
+            //                    .enableRestStyle()
+            //                    .template("/templates/controller.java")
+            )
         .templateEngine(new FreemarkerTemplateEngine())
         .execute();
   }
