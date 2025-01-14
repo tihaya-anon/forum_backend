@@ -5,6 +5,7 @@ import com.anon.backend.entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.anon.backend.payload.vo.post.PostPersistVo;
 import com.anon.backend.payload.vo.post.PostPublishVo;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface IPostService extends IService<Post> {
   void create(long author, PostPublishVo vo);
 
   void delete(long id);
+
+  List<PostPersistVo> listRecent(PageReq pageReq);
 
   List<PostPersistVo> filterByAuthor(long author, PageReq pageReq);
 

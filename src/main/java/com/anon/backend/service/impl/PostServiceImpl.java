@@ -1,5 +1,6 @@
 package com.anon.backend.service.impl;
 
+import com.anon.backend.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -39,10 +40,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ITagService tagService;
   private final IRefPostTagService refPostTagService;
+  private final IUserService userService;
 
-  public PostServiceImpl(ITagService tagService, IRefPostTagService refPostTagService) {
+  public PostServiceImpl(
+      ITagService tagService, IRefPostTagService refPostTagService, IUserService userService) {
     this.tagService = tagService;
     this.refPostTagService = refPostTagService;
+    this.userService = userService;
   }
 
   @Override
@@ -90,7 +94,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     if (postList.isEmpty()) {
       return null;
     }
-    return addTags(postList);
+    return addUsernames(addTags(postList));
   }
 
   @Override
@@ -102,10 +106,19 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     if (postList.isEmpty()) {
       return null;
     }
-    return addTags(postList);
+    return addUsernames(addTags(postList));
   }
 
-  private @NotNull <T> List<PostPersistVo> addTags(@NotNull List<Post> postList) {
+  public @NotNull List<PostPersistVo> listRecent(@NotNull PageReq pageReq) {
+    Page<Post> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
+    QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
+    queryWrapper.orderByDesc("create_at");
+    List<Post> postList =
+        DBOperation.perform(logger, CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
+    return addUsernames(addTags(postList));
+  }
+
+  private @NotNull List<PostPersistVo> addTags(@NotNull List<Post> postList) {
     List<PostPersistVo> postPersistVoList = new ArrayList<>();
     for (Post post : postList) {
       List<String> tagContentList =
@@ -115,5 +128,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
       postPersistVoList.add(postPersistVo);
     }
     return postPersistVoList;
+  }
+
+  private @NotNull List<PostPersistVo> addUsernames(@NotNull List<PostPersistVo> postList) {
+    for (PostPersistVo post : postList) {
+      String username =
+          DBOperation.perform(logger, CURD.READ, () -> userService.getById(post.getAuthor()))
+              .getUsername();
+      post.setUsername(username);
+    }
+    return postList;
   }
 }
