@@ -6,7 +6,6 @@ import com.anon.backend.payload.dto.user.UserUpdateDto;
 import com.anon.backend.payload.vo.user.UserPersistVo;
 import com.anon.backend.payload.vo.user.UserRegisterVo;
 import com.anon.backend.payload.vo.user.UserUpdateVo;
-import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
