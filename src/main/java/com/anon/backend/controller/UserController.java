@@ -1,7 +1,6 @@
 package com.anon.backend.controller;
 
 import com.anon.backend.common.constant.AuthType;
-import com.anon.backend.common.constant.AuthTypeConst;
 import com.anon.backend.common.constant.StatusCodeEnum;
 import com.anon.backend.common.resp.RestResp;
 import com.anon.backend.entity.User;
@@ -12,7 +11,6 @@ import com.anon.backend.payload.vo.user.*;
 import com.anon.backend.service.IUserService;
 import com.anon.backend.service.IStudentAuthService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.apache.commons.lang3.StringUtils;
@@ -55,19 +53,15 @@ public class UserController {
     if (!authenticated) {
       return RestResp.fail(StatusCodeEnum.SCHOOL_AUTH_FAILED);
     }
-    UserRegisterDto dto = UserMap.INSTANCE.registerVo2registerDto(vo);
+    UserRegisterDto dto = UserMap.INSTANCE.registerVo2RegisterDto(vo);
     UserPersistVo userPersistVo = userService.register(dto);
     return RestResp.success(userPersistVo).setMsg("welcome " + userPersistVo.getUsername());
   }
 
   @Operation(summary = "login, can add session expire")
   @PostMapping("/login")
-  public RestResp<?> login(
-      @Valid @RequestBody UserLoginVo vo,
-      @Parameter(description = "authType Header", example = AuthTypeConst.MOCK_VALUE)
-          @RequestHeader("authType")
-          String authType) {
-    boolean authenticated = studentAuthService.authenticate(authType, vo.getToken());
+  public RestResp<?> login(@Valid @RequestBody UserLoginVo vo) {
+    boolean authenticated = studentAuthService.authenticate(vo.getAuthType(), vo.getToken());
     if (!authenticated) {
       return RestResp.fail(StatusCodeEnum.SESSION_EXPIRED);
     }
@@ -86,7 +80,7 @@ public class UserController {
     if (isKeyProvided && isOldPasswordEmpty) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR, "must provide old password");
     }
-    UserUpdateDto userUpdateDto = UserMap.INSTANCE.updateVo2updateDto(vo);
+    UserUpdateDto userUpdateDto = UserMap.INSTANCE.updateVo2UpdateDto(vo);
     userUpdateDto.setId(id);
     UserPersistVo userPersistVo = userService.update(userUpdateDto);
     return RestResp.success(userPersistVo);

@@ -1,5 +1,6 @@
 package com.anon.backend.service.impl;
 
+import com.anon.backend.payload.dto.post.PostPublishDto;
 import com.anon.backend.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -12,7 +13,6 @@ import com.anon.backend.entity.Tag;
 import com.anon.backend.map.PostMap;
 import com.anon.backend.mapper.PostMapper;
 import com.anon.backend.payload.vo.post.PostPersistVo;
-import com.anon.backend.payload.vo.post.PostPublishVo;
 import com.anon.backend.service.IPostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.IRefPostTagService;
@@ -51,10 +51,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
 
   @Override
   @Transactional
-  public void create(long author, @NotNull PostPublishVo vo) {
-    String[] tagContents = vo.getTags();
-    Post post = PostMap.INSTANCE.publishVo2Post(vo);
-    post.setAuthor(author);
+  public void create(@NotNull PostPublishDto dto) {
+    String[] tagContents = dto.getTags();
+    Post post = PostMap.INSTANCE.publishDto2Post(dto);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
     for (String tagContent : tagContents) {
       Tag tag = tagService.getOne(new QueryWrapper<Tag>().eq("content", tagContent));

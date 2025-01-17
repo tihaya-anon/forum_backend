@@ -15,11 +15,11 @@ import org.mapstruct.factory.Mappers;
 public interface MessageMap {
   MessageMap INSTANCE = Mappers.getMapper(MessageMap.class);
 
-  MessageSendDto sendVo2sendDto(MessageSendVo vo);
+  MessageSendDto sendVo2SendDto(MessageSendVo vo);
 
   Message sendDto2Message(MessageSendDto dto);
 
-  MessageReceiveVo message2receiveVo(Message message);
+  MessageReceiveVo message2ReceiveVo(Message message);
 
-  MessageHistoryVo message2historyVo(Message message);
+  MessageHistoryVo message2HistoryVo(Message message);
 }

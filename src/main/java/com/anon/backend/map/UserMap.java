@@ -18,14 +18,13 @@ import org.mapstruct.factory.Mappers;
 public interface UserMap {
   UserMap INSTANCE = Mappers.getMapper(UserMap.class);
 
-  UserRegisterDto registerVo2registerDto(UserRegisterVo vo);
+  UserRegisterDto registerVo2RegisterDto(UserRegisterVo vo);
 
-  User registerDto2user(UserRegisterDto dto);
+  User registerDto2User(UserRegisterDto dto);
 
-  UserPersistVo user2persistVo(User user);
+  UserPersistVo user2PersistVo(User user);
 
-  UserUpdateDto updateVo2updateDto(UserUpdateVo vo);
+  UserUpdateDto updateVo2UpdateDto(UserUpdateVo vo);
 
-  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  void updateDto2user(UserUpdateDto dto, @MappingTarget User user);
+  void updateDto2User(UserUpdateDto dto, @MappingTarget User user);
 }

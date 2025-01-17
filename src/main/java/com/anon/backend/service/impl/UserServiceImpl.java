@@ -19,13 +19,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.util.DBOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-    user = UserMap.INSTANCE.registerDto2user(dto);
+    user = UserMap.INSTANCE.registerDto2User(dto);
     List<AuthType> authTypes = AuthTypeConst.getAuthTypes();
     String school = "";
     for (AuthType authType : authTypes) {
@@ -78,7 +74,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     User finalUser = user;
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(finalUser));
-    UserPersistVo userPersistVo = UserMap.INSTANCE.user2persistVo(user);
+    UserPersistVo userPersistVo = UserMap.INSTANCE.user2PersistVo(user);
     userPersistVo.setToken("<token>");
 
     return userPersistVo;
@@ -98,7 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       throw new CustomException(StatusCodeEnum.PASSWORD_WRONG);
     }
 
-    UserPersistVo userPersistVo = UserMap.INSTANCE.user2persistVo(user);
+    UserPersistVo userPersistVo = UserMap.INSTANCE.user2PersistVo(user);
     userPersistVo.setToken("<token>");
 
     return userPersistVo;
@@ -121,10 +117,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       dto.setPassword(passwordEncoder.encode(dto.getPassword()));
     }
 
-    UserMap.INSTANCE.updateDto2user(dto, user);
+    UserMap.INSTANCE.updateDto2User(dto, user);
     DBOperation.performWithCheck(logger, CURD.UPDATE, () -> this.updateById(user));
 
-    return UserMap.INSTANCE.user2persistVo(user);
+    return UserMap.INSTANCE.user2PersistVo(user);
   }
 
   @Override

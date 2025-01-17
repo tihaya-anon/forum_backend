@@ -73,7 +73,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     }
     List<MessageReceiveVo> messageReceiveVoList =
         messageList.stream()
-            .map(MessageMap.INSTANCE::message2receiveVo)
+            .map(MessageMap.INSTANCE::message2ReceiveVo)
             .collect(Collectors.toCollection(ArrayList::new));
     Collections.reverse(messageReceiveVoList);
     return messageReceiveVoList;
@@ -89,7 +89,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     List<MessageHistoryVo> messageHistoryVoList;
     messageHistoryVoList =
         messageList.stream()
-            .map(MessageMap.INSTANCE::message2historyVo)
+            .map(MessageMap.INSTANCE::message2HistoryVo)
             .sorted(Comparator.comparing(MessageHistoryVo::getCreateAt))
             .toList();
     return messageHistoryVoList;
@@ -112,7 +112,6 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
         SecretKey secretKey = SymmetricKeyGen.get();
         keyA = encodeSecretKeyByUser(secretKey, userA);
         keyB = encodeSecretKeyByUser(secretKey, userB);
-        System.out.println(keyA.length());
         DBOperation.performWithCheck(
             logger, CURD.CREATE, () -> baseMapper.createRecipientKey(idA, idB, keyA, keyB) > 0);
       } catch (Exception e) {

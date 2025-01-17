@@ -9,6 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class UserLoginVo {
+  private @NotBlank String authType;
   private @NotBlank String phone;
   private @NotBlank String password;
   private @NotBlank String token;

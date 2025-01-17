@@ -3,6 +3,8 @@ package com.anon.backend.controller;
 import com.anon.backend.common.constant.MessageEnum;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.common.resp.RestResp;
+import com.anon.backend.map.PostMap;
+import com.anon.backend.payload.dto.post.PostPublishDto;
 import com.anon.backend.payload.vo.post.PostPersistVo;
 import com.anon.backend.payload.vo.post.PostPublishVo;
 import com.anon.backend.service.IPostService;
@@ -31,7 +33,9 @@ public class PostController {
   @Operation(summary = "publish new post")
   @PostMapping("/{id}")
   public RestResp<Void> publish(@PathVariable long id, @Valid @RequestBody PostPublishVo vo) {
-    postService.create(id, vo);
+    PostPublishDto dto = PostMap.INSTANCE.publishVo2PublishDto(vo);
+    dto.setAuthor(id);
+    postService.create(dto);
     return RestResp.success();
   }
 
@@ -44,21 +48,21 @@ public class PostController {
 
   @Operation(summary = "filter by author")
   @GetMapping("/author/{id}")
-  public RestResp<?> filterAuthor(@PathVariable long id, PageReq pageReq) {
+  public RestResp<?> filterAuthor(@PathVariable long id, @RequestBody PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "filter by tag")
   @GetMapping("/tag/{tag}")
-  public RestResp<?> filterTag(@PathVariable String tag, PageReq pageReq) {
+  public RestResp<?> filterTag(@PathVariable String tag, @RequestBody PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.filterByTag(tag, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "get posts")
   @GetMapping("")
-  public RestResp<?> list(PageReq pageReq) {
+  public RestResp<?> list(@RequestBody PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.listRecent(pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }

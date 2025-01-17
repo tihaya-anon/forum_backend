@@ -2,6 +2,7 @@ package com.anon.backend.service;
 
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.entity.Post;
+import com.anon.backend.payload.dto.post.PostPublishDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.anon.backend.payload.vo.post.PostPersistVo;
 import com.anon.backend.payload.vo.post.PostPublishVo;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public interface IPostService extends IService<Post> {
 
-  void create(long author, PostPublishVo vo);
+  void create(PostPublishDto dto);
 
   void delete(long id);
 

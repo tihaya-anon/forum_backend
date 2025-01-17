@@ -38,7 +38,7 @@ public class MessageController {
     if (id == to) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR).setMsg(MessageEnum.CONTACT_SELF_FORBID);
     }
-    MessageSendDto dto = MessageMap.INSTANCE.sendVo2sendDto(vo);
+    MessageSendDto dto = MessageMap.INSTANCE.sendVo2SendDto(vo);
     dto.setSender(id);
     dto.setReceiver(to);
     messageService.create(dto);
