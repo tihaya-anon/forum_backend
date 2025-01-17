@@ -11,6 +11,9 @@ spring:
     url: jdbc:p6spy:mysql://${db.domain}
     username: ${db.username}
     password: ${db.password}
+  rabbitmq:
+    addresses: localhost
+    virtual-host: /dev
 server:
   port: 8080
   address: localhost

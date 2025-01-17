@@ -1,6 +1,7 @@
 package com.anon.backend.service.impl;
 
 import com.anon.backend.payload.dto.post.PostPublishDto;
+import com.anon.backend.payload.dto.post.PostTagDto;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,9 +19,11 @@ import com.anon.backend.service.IRefPostTagService;
 import com.anon.backend.service.ITagService;
 import com.anon.backend.service.util.DBOperation;
 import com.anon.backend.service.util.PageOperation;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,35 +38,20 @@ import java.util.List;
  * @since 2024-10-22
  */
 @Service
+@AllArgsConstructor
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IPostService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ITagService tagService;
   private final IRefPostTagService refPostTagService;
-
-  public PostServiceImpl(ITagService tagService, IRefPostTagService refPostTagService) {
-    this.tagService = tagService;
-    this.refPostTagService = refPostTagService;
-  }
+  private final RabbitTemplate rabbitTemplate;
 
   @Override
   @Transactional
   public void create(@NotNull PostPublishDto dto) {
-    String[] tagContents = dto.getTags();
     Post post = PostMap.INSTANCE.publishDto2Post(dto);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
-    for (String tagContent : tagContents) {
-      Tag tag = tagService.getOne(new QueryWrapper<Tag>().eq("content", tagContent));
-      if (tag == null) {
-        tag = new Tag();
-        tag.setContent(tagContent);
-        Tag finalTag = tag;
-        DBOperation.performWithCheck(logger, CURD.CREATE, () -> tagService.save(finalTag));
-      }
-      RefPostTag refPostTag = new RefPostTag();
-      refPostTag.setPostId(post.getId());
-      refPostTag.setTagId(tag.getId());
-      DBOperation.performWithCheck(logger, CURD.CREATE, () -> refPostTagService.save(refPostTag));
-    }
+    PostTagDto postTagDto = PostMap.INSTANCE.post2TagDto(post);
+    rabbitTemplate.convertAndSend("amq.direct", "tag.create", postTagDto);
   }
 
   @Override

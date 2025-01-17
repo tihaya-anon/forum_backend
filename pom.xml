@@ -95,10 +95,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--        spring security-->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>6.3.2</version>
+        </dependency>
+
+        <!--        spring amqp-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
     </dependencies>
 

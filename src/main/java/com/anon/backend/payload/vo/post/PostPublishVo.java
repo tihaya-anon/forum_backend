@@ -11,4 +11,5 @@ import lombok.ToString;
 public class PostPublishVo {
   private String[] tags;
   private @NotBlank String title;
+  private Boolean isAnonymous;
 }

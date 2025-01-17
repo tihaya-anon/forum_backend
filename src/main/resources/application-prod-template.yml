@@ -10,11 +10,15 @@ spring:
     url: ${db.url}
     username: ${db.username}
     password: ${db.password}
+  rabbitmq:
+    addresses: localhost
+    virtual-host: /prod
 server:
   port: 8080
   address: localhost
   ssl:
     enabled: false
+
 
 springdoc:
   api-docs:
