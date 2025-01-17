@@ -48,21 +48,21 @@ public class PostController {
 
   @Operation(summary = "filter by author")
   @GetMapping("/author/{id}")
-  public RestResp<?> filterAuthor(@PathVariable long id, @RequestBody PageReq pageReq) {
+  public RestResp<?> filterAuthor(@PathVariable long id, PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "filter by tag")
   @GetMapping("/tag/{tag}")
-  public RestResp<?> filterTag(@PathVariable String tag, @RequestBody PageReq pageReq) {
+  public RestResp<?> filterTag(@PathVariable String tag, PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.filterByTag(tag, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 
   @Operation(summary = "get posts")
   @GetMapping("")
-  public RestResp<?> list(@RequestBody PageReq pageReq) {
+  public RestResp<?> list(PageReq pageReq) {
     List<PostPersistVo> postPersistVoList = postService.listRecent(pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }

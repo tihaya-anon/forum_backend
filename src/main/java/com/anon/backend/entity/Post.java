@@ -14,7 +14,7 @@ import lombok.Setter;
 * post is different from comment, for it is required to search posts fast, but it doesn't matter if user wait when loading the posts' details
 *
 * @author anon
-* @since 2025-01-14
+* @since 2025-01-17
 */
 @Getter
 @Setter
@@ -42,4 +42,6 @@ public class Post implements Serializable {
   private LocalDateTime createAt;
 
   private LocalDateTime updateAt;
+
+  private Integer tagCount;
 }

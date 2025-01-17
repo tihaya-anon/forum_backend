@@ -13,9 +13,8 @@ import java.util.List;
 public class PostPersistVo {
   private Long id;
   private String title;
-  private List<String> tagList;
+  private Integer tagCount;
   private Long author;
-  private String username;
   private Integer commentCount;
   private Integer likes;
   private Integer dislikes;

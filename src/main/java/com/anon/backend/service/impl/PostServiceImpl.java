@@ -93,7 +93,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     if (postList.isEmpty()) {
       return null;
     }
-    return addUsernames(addTags(postList));
+    return postList.stream().map(PostMap.INSTANCE::post2PersistVo).toList();
   }
 
   @Override
@@ -105,7 +105,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     if (postList.isEmpty()) {
       return null;
     }
-    return addUsernames(addTags(postList));
+    return postList.stream().map(PostMap.INSTANCE::post2PersistVo).toList();
   }
 
   public @NotNull List<PostPersistVo> listRecent(@NotNull PageReq pageReq) {
@@ -114,28 +114,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     queryWrapper.orderByDesc("create_at");
     List<Post> postList =
         DBOperation.perform(logger, CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
-    return addUsernames(addTags(postList));
-  }
-
-  private @NotNull List<PostPersistVo> addTags(@NotNull List<Post> postList) {
-    List<PostPersistVo> postPersistVoList = new ArrayList<>();
-    for (Post post : postList) {
-      List<String> tagContentList =
-          DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostTags(post.getId()));
-      PostPersistVo postPersistVo = PostMap.INSTANCE.post2PersistVo(post);
-      postPersistVo.setTagList(tagContentList);
-      postPersistVoList.add(postPersistVo);
-    }
-    return postPersistVoList;
-  }
-
-  private @NotNull List<PostPersistVo> addUsernames(@NotNull List<PostPersistVo> postList) {
-    for (PostPersistVo post : postList) {
-      String username =
-          DBOperation.perform(logger, CURD.READ, () -> userService.getById(post.getAuthor()))
-              .getUsername();
-      post.setUsername(username);
-    }
-    return postList;
+    return postList.stream().map(PostMap.INSTANCE::post2PersistVo).toList();
   }
 }

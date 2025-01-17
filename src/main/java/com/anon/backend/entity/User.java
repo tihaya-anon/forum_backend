@@ -14,7 +14,7 @@ import lombok.Setter;
 * when registering, user must provide its session id. Once session validation passed, use session id to generate a pair of keys
 *
 * @author anon
-* @since 2025-01-14
+* @since 2025-01-17
 */
 @Getter
 @Setter
