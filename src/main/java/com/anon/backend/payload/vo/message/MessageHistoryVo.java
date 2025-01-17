@@ -6,11 +6,12 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Setter
+@Getter
 @ToString
-public class MessageReceiveVo {
+public class MessageHistoryVo {
   private Long sender;
+  private Long receiver;
   private String content;
   private LocalDateTime createAt;
 }

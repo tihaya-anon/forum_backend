@@ -1,16 +1,16 @@
-package com.anon.backend.model.user;
+package com.anon.backend.payload.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
 @Setter
+@Getter
 @ToString
-public class UserUpdateModel {
-  private Integer id;
+public class UserRegisterDto {
   private String username;
   private String password;
+  private String authType;
   private String phone;
-  private String oldPassword;
+  private String pubKey;
 }

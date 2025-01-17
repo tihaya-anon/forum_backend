@@ -7,8 +7,8 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @ToString
 public class PostPersistVo {
   private Long id;

@@ -10,7 +10,7 @@ import com.anon.backend.payload.dto.user.UserRegisterDto;
 import com.anon.backend.payload.dto.user.UserUpdateDto;
 import com.anon.backend.payload.vo.user.*;
 import com.anon.backend.service.IUserService;
-import com.anon.backend.service.StudentAuthService;
+import com.anon.backend.service.IStudentAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -30,9 +30,9 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
   private final IUserService userService;
-  private final StudentAuthService studentAuthService;
+  private final IStudentAuthService studentAuthService;
 
-  public UserController(IUserService userService, StudentAuthService studentAuthService) {
+  public UserController(IUserService userService, IStudentAuthService studentAuthService) {
     this.userService = userService;
     this.studentAuthService = studentAuthService;
   }
@@ -77,7 +77,7 @@ public class UserController {
 
   @Operation(summary = "update user info")
   @PatchMapping("/{id}")
-  public RestResp<?> update(@PathVariable int id, @RequestBody UserUpdateVo vo) {
+  public RestResp<?> update(@PathVariable long id, @RequestBody UserUpdateVo vo) {
     boolean isOldPasswordEmpty = StringUtils.isEmpty(vo.getOldPassword());
     boolean isNewPasswordProvided = !StringUtils.isEmpty(vo.getPassword());
     boolean isPhoneProvided = !StringUtils.isEmpty(vo.getPhone());
@@ -94,7 +94,7 @@ public class UserController {
 
   @Operation(summary = "delete user")
   @DeleteMapping("/{id}")
-  public RestResp<Void> delete(@PathVariable int id) {
+  public RestResp<Void> delete(@PathVariable long id) {
     userService.delete(id);
     return RestResp.success();
   }

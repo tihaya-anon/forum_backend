@@ -1,7 +1,6 @@
 package com.anon.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.anon.backend.common.CustomException;
 import com.anon.backend.common.constant.CURD;
@@ -74,7 +73,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     }
     List<MessageReceiveVo> messageReceiveVoList =
         messageList.stream()
-            .map(MessageMap.INSTANCE::messageVo2receiveDto)
+            .map(MessageMap.INSTANCE::message2receiveVo)
             .collect(Collectors.toCollection(ArrayList::new));
     Collections.reverse(messageReceiveVoList);
     return messageReceiveVoList;
@@ -90,7 +89,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     List<MessageHistoryVo> messageHistoryVoList;
     messageHistoryVoList =
         messageList.stream()
-            .map(MessageMap.INSTANCE::messageVo2historyDto)
+            .map(MessageMap.INSTANCE::message2historyVo)
             .sorted(Comparator.comparing(MessageHistoryVo::getCreateAt))
             .toList();
     return messageHistoryVoList;

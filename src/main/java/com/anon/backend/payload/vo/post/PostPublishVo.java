@@ -1,13 +1,14 @@
-package com.anon.backend.dto.message;
+package com.anon.backend.payload.vo.post;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
 @Setter
+@Getter
 @ToString
-public class MessageSendDto {
-  @NotBlank private String content;
+public class PostPublishVo {
+  private String[] tags;
+  private @NotBlank String title;
 }

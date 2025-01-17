@@ -1,7 +1,7 @@
 package com.anon.backend.controller;
 
 import com.anon.backend.common.resp.RestResp;
-import com.anon.backend.dto.comment.CommentPublishDto;
+import com.anon.backend.payload.vo.comment.CommentPublishVo;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
   @Operation(summary = "publish new comment")
   @PostMapping("/{authorId}")
-  public RestResp<Void> publish(@PathVariable int authorId, CommentPublishDto dto) {
+  public RestResp<Void> publish(@PathVariable int authorId, CommentPublishVo vo) {
     return RestResp.success();
   }
 }
