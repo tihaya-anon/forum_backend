@@ -30,11 +30,15 @@ public class Post implements Serializable {
 
   private Long author;
 
+  private Integer tagCount;
+
   private Integer commentCount;
 
   private Integer likes;
 
   private Integer dislikes;
+
+  private Boolean isAnonymous;
 
   @TableLogic
   private Boolean isDelete;
@@ -42,6 +46,4 @@ public class Post implements Serializable {
   private LocalDateTime createAt;
 
   private LocalDateTime updateAt;
-
-  private Integer tagCount;
 }

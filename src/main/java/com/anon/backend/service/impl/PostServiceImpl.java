@@ -1,7 +1,6 @@
 package com.anon.backend.service.impl;
 
 import com.anon.backend.payload.dto.post.PostPublishDto;
-import com.anon.backend.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,13 +39,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ITagService tagService;
   private final IRefPostTagService refPostTagService;
-  private final IUserService userService;
 
-  public PostServiceImpl(
-      ITagService tagService, IRefPostTagService refPostTagService, IUserService userService) {
+  public PostServiceImpl(ITagService tagService, IRefPostTagService refPostTagService) {
     this.tagService = tagService;
     this.refPostTagService = refPostTagService;
-    this.userService = userService;
   }
 
   @Override
@@ -88,7 +84,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   @Override
   public List<PostPersistVo> filterByAuthor(long author, @NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
-    queryWrapper.eq("author", author).orderByDesc("create_at");
+    queryWrapper.eq("author", author).eq("is_anonymous", 0).orderByDesc("create_at");
     List<Post> postList = PageOperation.paginate(logger, pageReq, queryWrapper, baseMapper);
     if (postList.isEmpty()) {
       return null;
@@ -114,6 +110,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     queryWrapper.orderByDesc("create_at");
     List<Post> postList =
         DBOperation.perform(logger, CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
-    return postList.stream().map(PostMap.INSTANCE::post2PersistVo).toList();
+    return postList.stream()
+        .peek(
+            post -> {
+              if (post.getIsAnonymous()) {
+                post.setAuthor(null);
+              }
+            })
+        .map(PostMap.INSTANCE::post2PersistVo)
+        .toList();
   }
 }

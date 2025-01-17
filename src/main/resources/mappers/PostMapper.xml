@@ -16,6 +16,7 @@
                  JOIN tag ON ref_post_tag.tag_id = tag.id
         WHERE tag.content = #{tag}
           AND post.is_delete = 0
+          AND post.is_anonymous = 0
         ORDER BY post.create_at DESC
     </select>
 </mapper>
