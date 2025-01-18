@@ -9,14 +9,12 @@ import com.anon.backend.common.constant.CURD;
 import com.anon.backend.common.req.PageReq;
 import com.anon.backend.entity.Post;
 import com.anon.backend.entity.RefPostTag;
-import com.anon.backend.entity.Tag;
 import com.anon.backend.map.PostMap;
 import com.anon.backend.mapper.PostMapper;
 import com.anon.backend.payload.vo.post.PostPersistVo;
 import com.anon.backend.service.IPostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.IRefPostTagService;
-import com.anon.backend.service.ITagService;
 import com.anon.backend.service.util.DBOperation;
 import com.anon.backend.service.util.PageOperation;
 import lombok.AllArgsConstructor;
@@ -41,17 +39,15 @@ import java.util.List;
 @AllArgsConstructor
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IPostService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final ITagService tagService;
   private final IRefPostTagService refPostTagService;
-  private final RabbitTemplate rabbitTemplate;
+  private final RabbitTemplate template;
 
   @Override
-  @Transactional
   public void create(@NotNull PostPublishDto dto) {
     Post post = PostMap.INSTANCE.publishDto2Post(dto);
     DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
     PostTagDto postTagDto = PostMap.INSTANCE.post2TagDto(post);
-    rabbitTemplate.convertAndSend("amq.direct", "tag.create", postTagDto);
+    template.convertAndSend("amq.direct", "tag.create", postTagDto);
   }
 
   @Override
