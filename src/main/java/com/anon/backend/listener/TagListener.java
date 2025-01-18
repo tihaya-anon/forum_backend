@@ -21,6 +21,7 @@ public class TagListener {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ITagService tagService;
   private final IRefPostTagService refPostTagService;
+  private final DBOperation dbOperation = new DBOperation(logger);
 
   @RabbitListener(queues = "tag")
   @Transactional
@@ -31,12 +32,12 @@ public class TagListener {
         tag = new Tag();
         tag.setContent(content);
         Tag finalTag = tag;
-        DBOperation.performWithCheck(logger, CURD.CREATE, () -> tagService.save(finalTag));
+        dbOperation.performWithCheck(CURD.CREATE, () -> tagService.save(finalTag));
       }
       RefPostTag refPostTag = new RefPostTag();
       refPostTag.setPostId(dto.getId());
       refPostTag.setTagId(tag.getId());
-      DBOperation.performWithCheck(logger, CURD.CREATE, () -> refPostTagService.save(refPostTag));
+      dbOperation.performWithCheck(CURD.CREATE, () -> refPostTagService.save(refPostTag));
     }
   }
 }

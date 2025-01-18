@@ -39,13 +39,14 @@ import java.util.List;
 @AllArgsConstructor
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IPostService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final DBOperation dbOperation = new DBOperation(logger);
   private final IRefPostTagService refPostTagService;
   private final RabbitTemplate template;
 
   @Override
   public void create(@NotNull PostPublishDto dto) {
     Post post = PostMap.INSTANCE.publishDto2Post(dto);
-    DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(post));
+    dbOperation.performWithCheck(CURD.CREATE, () -> this.save(post));
     PostTagDto postTagDto = PostMap.INSTANCE.post2TagDto(post);
     template.convertAndSend("amq.direct", "tag.create", postTagDto);
   }
@@ -53,16 +54,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   @Override
   @Transactional
   public void delete(long id) {
-    DBOperation.performWithCheck(logger, CURD.DELETE, () -> this.removeById(id));
+    dbOperation.performWithCheck(CURD.DELETE, () -> this.removeById(id));
 
     QueryWrapper<RefPostTag> queryWrapper = new QueryWrapper<RefPostTag>().eq("post_id", id);
     BaseMapper<RefPostTag> refPostTagBaseMapper = refPostTagService.getBaseMapper();
     List<RefPostTag> refPostTagList =
-        DBOperation.perform(logger, CURD.READ, () -> refPostTagBaseMapper.selectList(queryWrapper));
+        dbOperation.perform(CURD.READ, () -> refPostTagBaseMapper.selectList(queryWrapper));
     ArrayList<Long> refPostTagIds = new ArrayList<>();
     refPostTagList.forEach(refPostTag -> refPostTagIds.add(refPostTag.getId()));
-    DBOperation.performWithCheck(
-        logger, CURD.DELETE, () -> refPostTagService.removeByIds(refPostTagIds));
+    dbOperation.performWithCheck(CURD.DELETE, () -> refPostTagService.removeByIds(refPostTagIds));
   }
 
   @Override
@@ -80,7 +80,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   public List<PostPersistVo> filterByTag(String tagContent, @NotNull PageReq pageReq) {
     Page<Post> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     List<Post> postList =
-        DBOperation.perform(logger, CURD.READ, () -> baseMapper.readPostByTag(page, tagContent))
+        dbOperation
+            .perform(CURD.READ, () -> baseMapper.readPostByTag(page, tagContent))
             .getRecords();
     if (postList.isEmpty()) {
       return null;
@@ -93,7 +94,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.orderByDesc("create_at");
     List<Post> postList =
-        DBOperation.perform(logger, CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
+        dbOperation.perform(CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
     return postList.stream()
         .peek(
             post -> {

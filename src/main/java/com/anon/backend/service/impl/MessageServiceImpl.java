@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.IUserService;
 import com.anon.backend.service.util.DBOperation;
 import com.anon.backend.service.util.PageOperation;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -43,20 +44,18 @@ import java.util.stream.Collectors;
  * @since 2024-10-22
  */
 @Service
+@AllArgsConstructor
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     implements IMessageService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final IUserService userService;
-
-  MessageServiceImpl(IUserService userService) {
-    this.userService = userService;
-  }
+  private final DBOperation dbOperation = new DBOperation(logger);
 
   @Override
   public void create(@NotNull MessageSendDto dto) {
     getRecipient(dto.getSender(), dto.getReceiver());
     Message message = MessageMap.INSTANCE.sendDto2Message(dto);
-    DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(message));
+    dbOperation.performWithCheck(CURD.CREATE, () -> this.save(message));
   }
 
   @Override
@@ -105,15 +104,15 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     String keyA;
     String keyB;
     Map<String, Object> key =
-        DBOperation.perform(logger, CURD.READ, () -> baseMapper.readRecipientKey(idA, idB));
+        dbOperation.perform(CURD.READ, () -> baseMapper.readRecipientKey(idA, idB));
 
     if (key == null || key.isEmpty()) {
       try {
         SecretKey secretKey = SymmetricKeyGen.get();
         keyA = encodeSecretKeyByUser(secretKey, userA);
         keyB = encodeSecretKeyByUser(secretKey, userB);
-        DBOperation.performWithCheck(
-            logger, CURD.CREATE, () -> baseMapper.createRecipientKey(idA, idB, keyA, keyB) > 0);
+        dbOperation.performWithCheck(
+            CURD.CREATE, () -> baseMapper.createRecipientKey(idA, idB, keyA, keyB) > 0);
       } catch (Exception e) {
         logger.error("Exception during insert recipient({}, {}) key: {}", idA, idB, e.getMessage());
         throw new CustomException(StatusCodeEnum.SYSTEM_ERROR);

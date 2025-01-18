@@ -17,6 +17,7 @@ import com.anon.backend.payload.vo.user.UserPersistVo;
 import com.anon.backend.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.anon.backend.service.util.DBOperation;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,8 +33,10 @@ import java.util.List;
  * @since 2024-10-22
  */
 @Service
+@AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final DBOperation dbOperation = new DBOperation(logger);
 
   @Override
   public User getUserByPhone(String phone) {
@@ -73,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     user.setSchool(school);
 
     User finalUser = user;
-    DBOperation.performWithCheck(logger, CURD.CREATE, () -> this.save(finalUser));
+    dbOperation.performWithCheck(CURD.CREATE, () -> this.save(finalUser));
     UserPersistVo userPersistVo = UserMap.INSTANCE.user2PersistVo(user);
     userPersistVo.setToken("<token>");
 
@@ -118,14 +121,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     UserMap.INSTANCE.updateDto2User(dto, user);
-    DBOperation.performWithCheck(logger, CURD.UPDATE, () -> this.updateById(user));
+    dbOperation.performWithCheck(CURD.UPDATE, () -> this.updateById(user));
 
     return UserMap.INSTANCE.user2PersistVo(user);
   }
 
   @Override
   public void delete(long id) {
-    DBOperation.performWithCheck(logger, CURD.DELETE, () -> this.removeById(id));
+    dbOperation.performWithCheck(CURD.DELETE, () -> this.removeById(id));
   }
 
   @Override
