@@ -21,5 +21,5 @@ public interface PostMap {
 
   PostPersistVo post2PersistVo(Post post);
 
-  PostTagDto post2TagDto(Post post);
+  PostTagDto publishDto2TagDto(PostPublishDto dto);
 }

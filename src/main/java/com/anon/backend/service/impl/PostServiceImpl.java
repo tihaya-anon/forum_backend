@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,21 +42,21 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   private final DBOperation dbOperation = new DBOperation(logger);
   private final PageOperation<Post> pageOperation = new PageOperation<>(logger, baseMapper);
   private final IRefPostTagService refPostTagService;
-  private final RabbitTemplate template;
+  private final StreamBridge bridge;
 
   @Override
   public void create(@NotNull PostPublishDto dto) {
     Post post = PostMap.INSTANCE.publishDto2Post(dto);
     dbOperation.performWithCheck(CURD.CREATE, () -> this.save(post));
-    PostTagDto postTagDto = PostMap.INSTANCE.post2TagDto(post);
-    template.convertAndSend("amq.direct", "tag.create", postTagDto);
+    PostTagDto postTagDto = PostMap.INSTANCE.publishDto2TagDto(dto);
+    postTagDto.setId(post.getId());
+    bridge.send("tagAdd-out-0", postTagDto);
   }
 
   @Override
   @Transactional
   public void delete(long id) {
     dbOperation.performWithCheck(CURD.DELETE, () -> this.removeById(id));
-
     QueryWrapper<RefPostTag> queryWrapper = new QueryWrapper<RefPostTag>().eq("post_id", id);
     BaseMapper<RefPostTag> refPostTagBaseMapper = refPostTagService.getBaseMapper();
     List<RefPostTag> refPostTagList =

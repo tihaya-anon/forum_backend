@@ -11,9 +11,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.function.Consumer;
 
 @Component
 @AllArgsConstructor
@@ -23,23 +24,23 @@ public class TagListener {
   private final IRefPostTagService refPostTagService;
   private final DBOperation dbOperation = new DBOperation(logger);
 
-  @RabbitListener(queues = "tag")
+  @Bean("tagAdd")
   @Transactional
-  public void create(PostTagDto dto) {
-    System.out.println("run into listener");
-    System.out.println(dto);
-    for (String content : dto.getTags()) {
-      Tag tag = tagService.getOne(new QueryWrapper<Tag>().eq("content", content));
-      if (tag == null) {
-        tag = new Tag();
-        tag.setContent(content);
-        Tag finalTag = tag;
-        dbOperation.performWithCheck(CURD.CREATE, () -> tagService.save(finalTag));
+  public Consumer<PostTagDto> create() {
+    return dto -> {
+      for (String content : dto.getTags()) {
+        Tag tag = tagService.getOne(new QueryWrapper<Tag>().eq("content", content));
+        if (tag == null) {
+          tag = new Tag();
+          tag.setContent(content);
+          Tag finalTag = tag;
+          dbOperation.performWithCheck(CURD.CREATE, () -> tagService.save(finalTag));
+        }
+        RefPostTag refPostTag = new RefPostTag();
+        refPostTag.setPostId(dto.getId());
+        refPostTag.setTagId(tag.getId());
+        dbOperation.performWithCheck(CURD.CREATE, () -> refPostTagService.save(refPostTag));
       }
-      RefPostTag refPostTag = new RefPostTag();
-      refPostTag.setPostId(dto.getId());
-      refPostTag.setTagId(tag.getId());
-      dbOperation.performWithCheck(CURD.CREATE, () -> refPostTagService.save(refPostTag));
-    }
+    };
   }
 }
