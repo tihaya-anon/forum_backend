@@ -40,6 +40,7 @@ import java.util.List;
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IPostService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DBOperation dbOperation = new DBOperation(logger);
+  private final PageOperation<Post> pageOperation = new PageOperation<>(logger, baseMapper);
   private final IRefPostTagService refPostTagService;
   private final RabbitTemplate template;
 
@@ -69,7 +70,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   public List<PostPersistVo> filterByAuthor(long author, @NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("author", author).eq("is_anonymous", 0).orderByDesc("create_at");
-    List<Post> postList = PageOperation.paginate(logger, pageReq, queryWrapper, baseMapper);
+    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper);
     if (postList.isEmpty()) {
       return null;
     }
@@ -90,11 +91,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   public @NotNull List<PostPersistVo> listRecent(@NotNull PageReq pageReq) {
-    Page<Post> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.orderByDesc("create_at");
-    List<Post> postList =
-        dbOperation.perform(CURD.READ, () -> this.page(page, queryWrapper)).getRecords();
+    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper);
     return postList.stream()
         .peek(
             post -> {

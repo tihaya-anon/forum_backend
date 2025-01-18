@@ -14,16 +14,15 @@ import org.slf4j.Logger;
 import java.util.List;
 
 @AllArgsConstructor
-public class PageOperation {
-  public static <T> List<T> paginate(
-      Logger logger,
-      @NotNull PageReq pageReq,
-      QueryWrapper<T> queryWrapper,
-      BaseMapper<T> baseMapper) {
+public class PageOperation<T> {
+  private final Logger logger;
+  private final BaseMapper<T> baseMapper;
 
+  public List<T> paginate(@NotNull PageReq pageReq, QueryWrapper<T> queryWrapper) {
     IPage<T> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     IPage<T> resultPage =
         new DBOperation(logger).perform(CURD.READ, () -> baseMapper.selectPage(page, queryWrapper));
+
     return resultPage.getRecords();
   }
 }

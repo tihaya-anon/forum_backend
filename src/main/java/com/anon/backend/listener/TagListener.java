@@ -26,6 +26,8 @@ public class TagListener {
   @RabbitListener(queues = "tag")
   @Transactional
   public void create(PostTagDto dto) {
+    System.out.println("run into listener");
+    System.out.println(dto);
     for (String content : dto.getTags()) {
       Tag tag = tagService.getOne(new QueryWrapper<Tag>().eq("content", content));
       if (tag == null) {
