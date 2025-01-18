@@ -34,7 +34,11 @@ public class DBOperation {
   }
 
   private void handleException(CURD curd, Exception e) {
-    this.logger.error("Exception during {} operation: {}", curd.getType(), e.getMessage());
+    this.logger.error(
+        "Exception during {} operation: `{}` {}",
+        curd.getType(),
+        e.getMessage(),
+        e.getStackTrace());
     throw new CustomException(StatusCodeEnum.SYSTEM_ERROR);
   }
 }

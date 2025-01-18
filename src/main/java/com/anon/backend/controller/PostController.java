@@ -39,9 +39,9 @@ public class PostController {
   }
 
   @Operation(summary = "delete post")
-  @DeleteMapping("/{author}")
-  public RestResp<Void> delete(@PathVariable long author) {
-    postService.delete(author);
+  @DeleteMapping("/{id}")
+  public RestResp<Void> delete(@PathVariable long id) {
+    postService.delete(id);
     return RestResp.success();
   }
 

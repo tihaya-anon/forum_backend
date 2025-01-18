@@ -25,7 +25,6 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,8 +39,7 @@ import java.util.List;
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IPostService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DBOperation dbOperation = new DBOperation(logger);
-  private final PageOperation<Post> pageOperation = new PageOperation<>(logger, baseMapper);
-  private final IRefPostTagService refPostTagService;
+  private final PageOperation<Post> pageOperation = new PageOperation<>(logger);
   private final StreamBridge bridge;
 
   @Override
@@ -53,23 +51,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   }
 
   @Override
-  @Transactional
   public void delete(long id) {
     dbOperation.performWithCheck(CURD.DELETE, () -> this.removeById(id));
-    QueryWrapper<RefPostTag> queryWrapper = new QueryWrapper<RefPostTag>().eq("post_id", id);
-    BaseMapper<RefPostTag> refPostTagBaseMapper = refPostTagService.getBaseMapper();
-    List<RefPostTag> refPostTagList =
-        dbOperation.perform(CURD.READ, () -> refPostTagBaseMapper.selectList(queryWrapper));
-    ArrayList<Long> refPostTagIds = new ArrayList<>();
-    refPostTagList.forEach(refPostTag -> refPostTagIds.add(refPostTag.getId()));
-    dbOperation.performWithCheck(CURD.DELETE, () -> refPostTagService.removeByIds(refPostTagIds));
+    bridge.send("tagRemove-out-0", id);
   }
 
   @Override
   public List<PostPersistVo> filterByAuthor(long author, @NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("author", author).eq("is_anonymous", 0).orderByDesc("create_at");
-    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper);
+    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper, baseMapper);
     if (postList.isEmpty()) {
       return null;
     }
@@ -92,7 +83,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   public @NotNull List<PostPersistVo> listRecent(@NotNull PageReq pageReq) {
     QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
     queryWrapper.orderByDesc("create_at");
-    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper);
+    List<Post> postList = pageOperation.paginate(pageReq, queryWrapper, baseMapper);
     return postList.stream()
         .peek(
             post -> {

@@ -16,9 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PageOperation<T> {
   private final Logger logger;
-  private final BaseMapper<T> baseMapper;
 
-  public List<T> paginate(@NotNull PageReq pageReq, QueryWrapper<T> queryWrapper) {
+  public List<T> paginate(
+      @NotNull PageReq pageReq, QueryWrapper<T> queryWrapper, BaseMapper<T> baseMapper) {
     IPage<T> page = new Page<>(pageReq.getPageIdx(), pageReq.getPageSize());
     IPage<T> resultPage =
         new DBOperation(logger).perform(CURD.READ, () -> baseMapper.selectPage(page, queryWrapper));

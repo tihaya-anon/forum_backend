@@ -50,7 +50,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final IUserService userService;
   private final DBOperation dbOperation = new DBOperation(logger);
-  private final PageOperation<Message> pageOperation = new PageOperation<>(logger, baseMapper);
+  private final PageOperation<Message> pageOperation = new PageOperation<>(logger);
 
   @Override
   public void create(@NotNull MessageSendDto dto) {
@@ -67,7 +67,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
       queryWrapper.eq("is_read", 0);
     }
     queryWrapper.orderByDesc("create_at");
-    List<Message> messageList = pageOperation.paginate(pageReq, queryWrapper);
+    List<Message> messageList = pageOperation.paginate(pageReq, queryWrapper, baseMapper);
     if (messageList.isEmpty()) {
       return null;
     }
