@@ -43,11 +43,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     QueryWrapper<User> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("phone", phone);
     List<User> userList = baseMapper.selectList(queryWrapper);
-
     if (userList.isEmpty()) {
       return null;
     }
-
     return userList.get(0);
   }
 
@@ -77,10 +75,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     User finalUser = user;
     dbOperation.performWithCheck(CURD.CREATE, () -> this.save(finalUser));
-    UserPersistVo userPersistVo = UserMap.INSTANCE.user2PersistVo(user);
-    userPersistVo.setToken("<token>");
 
-    return userPersistVo;
+    return UserMap.INSTANCE.user2PersistVo(user).setToken("<token>");
   }
 
   @Override
@@ -97,10 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       throw new CustomException(StatusCodeEnum.PASSWORD_WRONG);
     }
 
-    UserPersistVo userPersistVo = UserMap.INSTANCE.user2PersistVo(user);
-    userPersistVo.setToken("<token>");
-
-    return userPersistVo;
+    return UserMap.INSTANCE.user2PersistVo(user).setToken("<token>");
   }
 
   @Override

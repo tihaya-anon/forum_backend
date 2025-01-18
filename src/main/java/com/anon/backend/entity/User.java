@@ -9,15 +9,17 @@ import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * when registering, user must provide its session id. Once session validation passed, use session id to generate a pair of keys
 *
 * @author anon
-* @since 2025-01-17
+* @since 2025-01-18
 */
 @Getter
 @Setter
+@Accessors(chain = true)
 @Schema(name = "User", description = "when registering, user must provide its session id. Once session validation passed, use session id to generate a pair of keys")
 public class User implements Serializable {
   @Serial

@@ -31,25 +31,24 @@ public class PostController {
   }
 
   @Operation(summary = "publish new post")
-  @PostMapping("/{id}")
-  public RestResp<Void> publish(@PathVariable long id, @Valid @RequestBody PostPublishVo vo) {
-    PostPublishDto dto = PostMap.INSTANCE.publishVo2PublishDto(vo);
-    dto.setAuthor(id);
+  @PostMapping("/{author}")
+  public RestResp<Void> publish(@PathVariable long author, @Valid @RequestBody PostPublishVo vo) {
+    PostPublishDto dto = PostMap.INSTANCE.publishVo2PublishDto(vo).setAuthor(author);
     postService.create(dto);
     return RestResp.success();
   }
 
   @Operation(summary = "delete post")
-  @DeleteMapping("/{id}")
-  public RestResp<Void> delete(@PathVariable long id) {
-    postService.delete(id);
+  @DeleteMapping("/{author}")
+  public RestResp<Void> delete(@PathVariable long author) {
+    postService.delete(author);
     return RestResp.success();
   }
 
   @Operation(summary = "filter by author")
-  @GetMapping("/author/{id}")
-  public RestResp<?> filterAuthor(@PathVariable long id, PageReq pageReq) {
-    List<PostPersistVo> postPersistVoList = postService.filterByAuthor(id, pageReq);
+  @GetMapping("/author/{author}")
+  public RestResp<?> filterAuthor(@PathVariable long author, PageReq pageReq) {
+    List<PostPersistVo> postPersistVoList = postService.filterByAuthor(author, pageReq);
     return RestResp.allowNull(postPersistVoList, MessageEnum.NO_POST_FOUND);
   }
 

@@ -9,15 +9,17 @@ import java.io.Serializable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * 
 *
 * @author anon
-* @since 2025-01-17
+* @since 2025-01-18
 */
 @Getter
 @Setter
+@Accessors(chain = true)
 @TableName("ref_post_tag")
 @Schema(name = "RefPostTag", description = "")
 public class RefPostTag implements Serializable {

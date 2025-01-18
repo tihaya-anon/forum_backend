@@ -7,15 +7,17 @@ import java.io.Serializable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * tag can be filters and traced, so it is required to be an independent table
 *
 * @author anon
-* @since 2025-01-17
+* @since 2025-01-18
 */
 @Getter
 @Setter
+@Accessors(chain = true)
 @Schema(name = "Tag", description = "tag can be filters and traced, so it is required to be an independent table")
 public class Tag implements Serializable {
   @Serial

@@ -9,15 +9,17 @@ import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * integrated comment on post and comment on comment, support nested comments
 *
 * @author anon
-* @since 2025-01-17
+* @since 2025-01-18
 */
 @Getter
 @Setter
+@Accessors(chain = true)
 @Schema(name = "Comment", description = "integrated comment on post and comment on comment, support nested comments")
 public class Comment implements Serializable {
   @Serial

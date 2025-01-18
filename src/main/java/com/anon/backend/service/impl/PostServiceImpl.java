@@ -48,8 +48,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
   public void create(@NotNull PostPublishDto dto) {
     Post post = PostMap.INSTANCE.publishDto2Post(dto);
     dbOperation.performWithCheck(CURD.CREATE, () -> this.save(post));
-    PostTagDto postTagDto = PostMap.INSTANCE.publishDto2TagDto(dto);
-    postTagDto.setId(post.getId());
+    PostTagDto postTagDto = PostMap.INSTANCE.publishDto2TagDto(dto).setId(post.getId());
     bridge.send("tagAdd-out-0", postTagDto);
   }
 

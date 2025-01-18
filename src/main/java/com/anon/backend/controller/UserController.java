@@ -80,8 +80,7 @@ public class UserController {
     if (isKeyProvided && isOldPasswordEmpty) {
       return RestResp.fail(StatusCodeEnum.VALIDATION_ERROR, "must provide old password");
     }
-    UserUpdateDto userUpdateDto = UserMap.INSTANCE.updateVo2UpdateDto(vo);
-    userUpdateDto.setId(id);
+    UserUpdateDto userUpdateDto = UserMap.INSTANCE.updateVo2UpdateDto(vo).setId(id);
     UserPersistVo userPersistVo = userService.update(userUpdateDto);
     return RestResp.success(userPersistVo);
   }

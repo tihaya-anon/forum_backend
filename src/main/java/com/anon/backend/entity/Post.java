@@ -9,15 +9,17 @@ import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * post is different from comment, for it is required to search posts fast, but it doesn't matter if user wait when loading the posts' details
 *
 * @author anon
-* @since 2025-01-17
+* @since 2025-01-18
 */
 @Getter
 @Setter
+@Accessors(chain = true)
 @Schema(name = "Post", description = "post is different from comment, for it is required to search posts fast, but it doesn't matter if user wait when loading the posts' details")
 public class Post implements Serializable {
   @Serial

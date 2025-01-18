@@ -60,6 +60,7 @@ public class CodeGenerator {
                     .javaTemplate("/templates/entity.java")
                     .logicDeleteColumnName("is_delete")
                     .enableLombok()
+                    .enableChainModel()
                     .enableFileOverride()
             //                    .controllerBuilder()
             //                    .enableRestStyle()
